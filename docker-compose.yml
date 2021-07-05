@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./django/app:/app
+      - ./config/nginx:/etc/nginx.conf.d
+    depends_on:
+      - django_app
 
   mysql_db:
     platform: linux/x86_64
@@ -24,14 +33,17 @@ services:
     build:
       context: .
       dockerfile: ./django/Dockerfile
-    ports:
-      - "8000:8000"
-    links:
-      - mysql_db:mysql_db
+    command: gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000
+      # settings.py 환경분리 되어있어 settings를 지정해야하는 경우 다음과 같이 추가 입력
+      # [--env DJANGO_SETTINGS_MODULE='<django_project>.settings.production']
+    expose:
+      - "8000"
     depends_on:
       - mysql_db
-    networks:
-      - app-tier
+    links:
+      - mysql_db:mysql_db
+#    networks:
+#      - app-tier
     restart: always
     volumes:
       - ./django/app:/app
