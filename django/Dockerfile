@@ -15,8 +15,9 @@ RUN python3.8 -m venv env
 RUN /bin/bash -c "source env/bin/activate"
 
 COPY ./django/requirements.txt requirements.txt
+#RUN pip3 install mysqlclient
 RUN pip3 install -r requirements.txt
-
+#CMD [ "pip3", "install.py", "mysqlclient" ]
 EXPOSE 8000
 #COPY . .
 

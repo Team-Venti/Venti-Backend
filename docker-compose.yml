@@ -33,7 +33,7 @@ services:
     build:
       context: .
       dockerfile: ./django/Dockerfile
-    command: gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn venti.wsgi:application --bind 0.0.0.0:8000
       # settings.py 환경분리 되어있어 settings를 지정해야하는 경우 다음과 같이 추가 입력
       # [--env DJANGO_SETTINGS_MODULE='<django_project>.settings.production']
     expose:
