@@ -2,34 +2,32 @@ version: '3.8'
 
 services:
   nginx:
-    image: nginx:latest
+    container_name: nginx
+    build: ./nginx
     ports:
-      - "80:80"
-    volumes:
-      - ./django/app:/app
-      - ./config/nginx:/etc/nginx.conf.d
+      - "8084:80"
+#    volumes:
+#      - ./django/venti/nginx:/etc/nginx.conf.d
+#      - ./django/app:/app
     depends_on:
       - django_app
 
-  mysql_db:
-    platform: linux/x86_64
-    image: mysql:latest
-    restart: always
-    networks: 
-       - app-tier
-    volumes:
-       - ./mysql/db:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    cap_add:
-      - SYS_NICE
+  mysql:
+    image: mariadb:latest
+    container_name: mysql
+    expose:
+      - "3306"
     environment:
-      - MYSQL_DATABASE=app
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=1234
-      - MYSQL_ROOT_PASSWORD=1234
+      MYSQL_DATABASE: venti1
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 111111
+      MYSQL_ROOT_PASSWORD: 111111
+    volumes:
+      - ../db/data:/var/lib/mysql
+      - ../db/data/conf.d:/etc/mysql/conf.d
 
   django_app:
+    container_name: django_app
     build:
       context: .
       dockerfile: ./django/Dockerfile
@@ -39,9 +37,9 @@ services:
     expose:
       - "8000"
     depends_on:
-      - mysql_db
+      - mysql
     links:
-      - mysql_db:mysql_db
+      - mysql:mysql
 #    networks:
 #      - app-tier
     restart: always
