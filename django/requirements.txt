@@ -10,3 +10,4 @@ django-filter
 asgiref
 pytz
 sqlparse
+drf_yasg

@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*', 'django_app'] # 외부에서 웹 어플리케이션에 접
 # Application definition
 
 INSTALLED_APPS = [
+    'drf_yasg',
     'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
