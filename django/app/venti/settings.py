@@ -115,3 +115,7 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # nginx css 적용을 위해 static 파일 불러오기
+# STATICFILES_DIRS = [
+#     '/venti/src/static',
+#     '/usr/local/lib/python3.6/site-packages/django/contrib/admin/static',
+# ]

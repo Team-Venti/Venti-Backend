@@ -6,9 +6,10 @@ services:
     build: ./nginx
     ports:
       - "8084:80"
-#    volumes:
-#      - ./django/venti/nginx:/etc/nginx.conf.d
-#      - ./django/app:/app
+    volumes:
+      - ./django/venti/nginx:/etc/nginx.conf.d
+      - ./django/app:/app
+      - ./django/venti/static:/static
     depends_on:
       - django_app
 
