@@ -8,13 +8,14 @@ from rest_framework.routers import DefaultRouter
 # .view_join import ~ViewSet
 # .view_mainpage import ~ViewSet
 # 준기
-# .view_brand import ~ViewSet
-# .view_event import ~ViewSet
+from .view_brand import BrandViewSet
+from .view_event import EventViewSet
 # .view_mypage import ~ViewSet
-# .view_login import ~ViewSet
+# .view_search
+
 # 추가
 # .view_notification import ~ViewSet
-# admin 관련
+# 관리자 기능? 관련
 
 # CBV
 # urlpatterns = [
@@ -25,7 +26,9 @@ from rest_framework.routers import DefaultRouter
 # ViewSet
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
-# router.register()
+router.register(r'brands', BrandViewSet)
+router.register(r'events', EventViewSet)
+
 urlpatterns = [
     path('', include(router.urls)),
 ]
