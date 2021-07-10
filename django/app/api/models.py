@@ -18,12 +18,18 @@ class User(AbstractUser, DateInfo):
 class Category(DateInfo):
     name = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):  # admin 페이지 출력
+        return self.name
+
 
 class Brand(DateInfo):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="brands")
-    image = models.ImageField()  # imagefield setting.py 추가 설정 필요
+    image = models.ImageField(null=True)  # imagefield setting.py 추가 설정 필요
     name = models.CharField(max_length=50)
     text = models.TextField(null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Event(DateInfo):
@@ -34,8 +40,11 @@ class Event(DateInfo):
     banner_image = models.ImageField(null=True)
     text = models.TextField(null=True)
     due = models.DateField(null=True)
-    weekly_view = models.DateField(default=0, null=True)
+    weekly_view = models.IntegerField(null=True)
     url = models.URLField(null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Notification(DateInfo):
@@ -43,12 +52,21 @@ class Notification(DateInfo):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="notifications")
     notice_type = models.CharField(max_length=10)   # new / end
 
+    def __str__(self):
+        return str(self.user.username)+"의 "+str(self.event)+" 이벤트 알림"
+
 
 class SubscribeBrand(DateInfo):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="subscribebrands")
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="subscribebrands")
 
+    def __str__(self):
+        return str(self.user.username)+"의 "+str(self.brand)+" 브랜드 구독"
+
 
 class SubscribeEvent(DateInfo):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="subscribeevents")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="subscribeevents")
+
+    def __str__(self):
+        return str(self.user.username)+"의 "+str(self.event)+" 이벤트 좋아요"
