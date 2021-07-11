@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Event
-from .serializer_event import EventSerializer
+from .models import Event, SubscribeEvent
+from .serializer_event import EventSerializer, EventSubsSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -22,3 +22,11 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = EventFilter
+
+class EventSubsViewSet(viewsets.ModelViewSet):
+    queryset = SubscribeEvent.objects.all()
+    serializer_class = EventSubsSerializer
+
+events_subs_create = EventSubsViewSet.as_view({
+    'post': 'create',
+})

@@ -24,7 +24,7 @@
         <img src = "{{s.image}}">
         <p>{{s.text}}</p>
     </div>
-    <form method="POST" action="{% url 'subscribe' %}">
+    <form method="POST" action="{% url 'eventsubs' %}">
         <p>구독하기</p>
         <input name = "user" value = "{{ request.session.user }}">
         <input name = "event" value = "{{e}}">
