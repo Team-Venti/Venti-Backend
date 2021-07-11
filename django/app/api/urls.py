@@ -10,8 +10,9 @@ from rest_framework.routers import DefaultRouter
 # 준기
 from .view_brand import BrandViewSet
 from .view_event import EventViewSet
-# .view_mypage import ~ViewSet
-# .view_search
+from .view_subscribeEvent import SubscribeEventViewSet
+from .view_subscribeBrand import SubscribeBrandViewSet
+from .view_search import SearchViewSet
 
 # 추가
 # .view_notification import ~ViewSet
@@ -28,7 +29,9 @@ router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'brands', BrandViewSet)
 router.register(r'events', EventViewSet)
-
+router.register(r'myevents', SubscribeEventViewSet)
+router.register(r'mybrands', SubscribeBrandViewSet)
+router.register(r'search', SearchViewSet)    # post 용도로만
 urlpatterns = [
     path('', include(router.urls)),
 ]
