@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from .models import Event,User,SubscribeEvent
+from .models import Event,User,SubscribeBrand
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -11,5 +11,5 @@ class EventSerializer(serializers.ModelSerializer):
 
 class EventForYouSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Event
-        fields = ['brand']
+        model = SubscribeBrand
+        fields = ['user']

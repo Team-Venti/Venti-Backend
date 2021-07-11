@@ -11,13 +11,14 @@ from rest_framework.routers import DefaultRouter
 
 from .view_brand import BrandViewSet
 from .view_event import EventViewSet
-from .view_eventforyou import eventforyouView
+# import .view_eventforyou import EventForYouViewSet
 # .view_mypage import ~ViewSet
 # .view_search
 
 from .view_subscribeEvent import SubscribeEventViewSet
 from .view_subscribeBrand import SubscribeBrandViewSet
 from .view_search import SearchViewSet
+from . import view_eventforyou
 
 
 # 추가
@@ -31,8 +32,6 @@ from .view_search import SearchViewSet
 #     ]
 
 # ViewSet
-
-
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'brands', BrandViewSet)
@@ -44,5 +43,5 @@ router.register(r'search', SearchViewSet)    # post 용도로만
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('/eventforyou', eventforyouView.as_view())
+    path('eventforyou', view_eventforyou.EventforyouView.as_view(),name = "eventforyou"),
 ]
