@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+{% if request.session.user %}
+<p>어서오세요 {{request.session.user}} 님</p>
+ <p>logout</p>
+
+<form method="POST" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <p>logout</p>
+    <input type="submit" value="로그인">
+</form>
+{% endif %}
+<h2>이벤트 목록</h2>
+{% if events %}
+{% for e in events %}
+    <div style = "width: 50%; height: auto">
+        <p>{{s.name}}</p>
+        <img src = "{{s.image}}">
+        <p>{{s.text}}</p>
+    </div>
+    <form method="POST" action="{% url 'subscribe' %}">
+        <p>구독하기</p>
+        <input name = "user" value = "{{ request.session.user }}">
+        <input name = "event" value = "{{e}}">
+        <input type="submit" value="구독">
+    </form>
+{% endfor %}
+{% else %}
+   <p>이벤트 없..</p>
+{% endif %}
+</body>
+</html>
+

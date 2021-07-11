@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for venti project.
 
@@ -31,10 +32,14 @@ DEBUG = True
 ALLOWED_HOSTS = ['*', 'django_app']  # 외부에서 웹 어플리케이션에 접근
 
 # Application definition
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.request'  # template에서 세션 사용
+)
 
 INSTALLED_APPS = [
     'drf_yasg',
     'api.apps.ApiConfig',
+    'account.apps.AccountConfig',  # 로그인
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
