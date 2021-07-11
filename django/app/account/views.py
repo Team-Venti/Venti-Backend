@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 from api.models import User
 from django.contrib import auth
-from api.models import Event
+from api.models import Event, Brand
 from django.http import HttpResponse
 
 # Create your views here.
@@ -63,9 +63,10 @@ def logout(request):
 def home(request):
     user_pk = request.session.get('user')  # login함수에서 추가해준 requests.session['user'] = fuser.id
     events = Event.objects.all()
+    brands = Brand.objects.all()
 
     if user_pk:  # 세션에 user_pk 정보가 존재하면
         user = User.objects.get(pk=user_pk)
-        return render(request, 'home.html',{'events' : events})  # 해당 유저의 Fuser모델의 username 전달
+        return render(request, 'home.html',{'events' : events, 'brands' : brands})  # 해당 유저의 Fuser모델의 username 전달
 
-    return render(request, 'home.html',{'events' : events})  # 세션에 유저 정보 없으면 그냥 home으로
+    return render(request, 'home.html', {'events': events, 'brands': brands})  # 세션에 유저 정보 없으면 그냥 home으로
