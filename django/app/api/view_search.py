@@ -8,7 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 class SearchFilter(FilterSet):
-    brand = filters.NumberFilter(field_name="brand")
+    description = filters.CharFilter(field_name="description", lookup_expr="icontains")
+    brand = filters.CharFilter(field_name="brand")
     event = filters.NumberFilter(field_name="id")
 
     class Meta:
