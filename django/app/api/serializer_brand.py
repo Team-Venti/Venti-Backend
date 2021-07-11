@@ -9,7 +9,3 @@ class BrandSerializer(serializers.ModelSerializer):
         model = Brand
         fields = '__all__'
 
-class BrandSubsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubscribeBrand
-        fields = '__all__'

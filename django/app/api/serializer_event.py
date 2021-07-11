@@ -9,12 +9,6 @@ class EventSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class EventSubsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubscribeEvent
-        fields = '__all__'
-
-
 class EventForYouSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event

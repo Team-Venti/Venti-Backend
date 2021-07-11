@@ -37,7 +37,7 @@
         <img src = "{{b.image}}">
         <p>{{b.text}}</p>
     </div>
-    <form method="POST" action="api/brandsubs/">
+    <form method="POST" action="api/mybrands/">
         {% csrf_token %}
         <p>구독하기</p>
         <input name = "user" value = "{{ request.session.user}}">
@@ -57,7 +57,7 @@
         <img src = "{{e.image}}">
         <p>{{e.text}}</p>
     </div>
-    <form method="POST" action="api/eventsubs/">
+    <form method="POST" action="api/myevents/">
         {% csrf_token %}
         <p>구독하기</p>
         <input name = "user" value = "{{ request.session.user}}">

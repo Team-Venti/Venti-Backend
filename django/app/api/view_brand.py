@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from .models import Brand, SubscribeBrand
 from .serializer_brand import BrandSerializer
-from .serializer_brand import BrandSubsSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -23,7 +22,3 @@ class BrandViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = BrandFilter
 
-
-class BrandSubsViewSet(viewsets.ModelViewSet):
-    queryset = SubscribeBrand.objects.all()
-    serializer_class = BrandSubsSerializer
