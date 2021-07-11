@@ -9,7 +9,7 @@ from rest_framework.routers import DefaultRouter
 # .view_mainpage import ~ViewSet
 # 준기
 from .view_brand import BrandViewSet, BrandSubsViewSet
-from .view_event import EventViewSet, EventSubsViewSet
+from .view_event import EventViewSet, EventSubsViewSet, EventForYouViewSet
 # .view_mypage import ~ViewSet
 # .view_search
 
@@ -30,6 +30,7 @@ router.register(r'brands', BrandViewSet)
 router.register(r'brandsubs', BrandSubsViewSet)
 router.register(r'events', EventViewSet)
 router.register(r'eventsubs', EventSubsViewSet)
+router.register(r'eventforyou', EventForYouViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
