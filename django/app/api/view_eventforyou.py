@@ -4,7 +4,7 @@ import json
 # from rest_framework_swagger import renderers
 # from rest_framework.decorators import api_view, renderer_classes
 
-from django.views import View
+from django.views import APIView
 from .models import Event, SubscribeBrand
 from django.http import JsonResponse, HttpResponse
 from .serializer_event import EventForYouSerializer
@@ -12,7 +12,7 @@ from rest_framework.parsers import JSONParser
 
 # eventforyou
 # @renderer_classes([renderers.OpenAPIRenderer, renderers.SwaggerUIRenderer])
-class EventforyouView(View):
+class EventforyouView(APIView):
     model = Event, SubscribeBrand
     # post : post 로 날라온 유저의 eventforyou 찾아주기
     def post(self, request):

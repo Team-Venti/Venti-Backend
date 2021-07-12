@@ -4,14 +4,13 @@ from api.models import User
 from django.contrib import auth
 from api.models import Event, Brand
 from django.http import HttpResponse
-
+from django.views import APIView
 # Create your views here.
 
 
 # 회원 가입
-def signup(request):
-    # post = 가입하기
-    if request.method == 'POST':
+class SignupView(APIView):
+    def post(self, request):
         # password와 confirm에 입력된 값이 같다면
         if request.POST['password'] == request.POST['confirm']:
             # user 객체를 새로 생성
@@ -20,13 +19,13 @@ def signup(request):
             auth.login(request, user)
             return redirect('/')
     # signup으로 GET 요청이 왔을 때, 회원가입 화면을 띄워준다.
-    return render(request, 'signup.html')
+        return render(request, 'signup.html')
 
 
 # 로그인
-def login(request):
+class LoginView(APIView):
     # login으로 POST 요청이 들어왔을 때, 로그인 절차를 밟는다.
-    if request.method == 'POST':
+    def post(self, request):
         # login.html에서 넘어온 username과 password를 각 변수에 저장한다.
         username = request.POST['username']
         password = request.POST['password']
@@ -45,19 +44,20 @@ def login(request):
             # 딕셔너리에 에러메세지를 전달하고 다시 login.html 화면으로 돌아간다.
             return render(request, 'login.html', {'error': 'username or password is incorrect.'})
     # login으로 GET 요청이 들어왔을때, 로그인 화면을 띄워준다.
-    else:
+    def get(self,request):
         return render(request, 'login.html')
 
 
 # 로그 아웃
-def logout(request):
+class LogoutView(APIView):
     # logout으로 POST 요청이 들어왔을 때, 로그아웃 절차를 밟는다.
-    if request.method == 'POST':
+    def post(self,request):
         auth.logout(request)
         return redirect('/')
 
     # logout으로 GET 요청이 들어왔을 때, 로그인 화면을 띄워준다.
-    return render(request, 'login.html')
+    def get(request):
+        return render(request, 'login.html')
 
 
 def home(request):
