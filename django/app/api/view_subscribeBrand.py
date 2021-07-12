@@ -8,6 +8,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 class SubscribeBrandFilter(FilterSet):
+    """
+        유저의 브랜드 구독 목록을 불러오거나 저장/삭제 하는 API
+        ---
+        # 내용
+            - user : 어떤 유저가 구독 했는지 (Foreign Key)
+            - brand : 어떤 브랜드를 구독 했는지 (Foreign Key)
+    """
     user = filters.NumberFilter(field_name="user")
 
     class Meta:
