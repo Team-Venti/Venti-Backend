@@ -17,6 +17,15 @@ class BrandFilter(FilterSet):
 
 
 class BrandViewSet(viewsets.ModelViewSet):
+    """
+        브랜드 목록을 불러오거나 저장/수정/삭제 하는 API
+        ---
+        # 내용
+            - name : 브랜드 이름
+            - image : 브랜드 대표 이미지
+            - text : 브랜드 설명
+            - category : 브랜드가 속한 카테고리(Foreign Key)
+    """
     serializer_class = BrandSerializer
     queryset = Brand.objects.all()
     filter_backends = (DjangoFilterBackend,)

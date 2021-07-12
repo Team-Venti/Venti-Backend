@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from .serializer_brand import BrandSerializer
-from .models import Event
+from .serializer_event import EventSerializer
+from .models import Brand
 
-
+# 수정필요
 class SearchSerializer(serializers.ModelSerializer):
-    brands = BrandSerializer(many=True)
+    events = EventSerializer(many=True)
 
     class Meta:
-        model = Event
-        fields = ['id', 'name', 'image', 'due', 'weekly_view', 'brands']
+        model = Brand
+        fields = ['id', 'name', 'image', 'events']

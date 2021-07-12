@@ -11,15 +11,11 @@ from rest_framework.routers import DefaultRouter
 
 from .view_brand import BrandViewSet
 from .view_event import EventViewSet
-# import .view_eventforyou import EventForYouViewSet
-# .view_mypage import ~ViewSet
-# .view_search
-
 from .view_subscribeEvent import SubscribeEventViewSet
 from .view_subscribeBrand import SubscribeBrandViewSet
-from .view_search import SearchViewSet
+from .views_search import Search
 from . import view_eventforyou
-
+from .view_weekly import Weekly
 
 # 추가
 # .view_notification import ~ViewSet
@@ -39,9 +35,11 @@ router.register(r'events', EventViewSet)
 # router.register(r'eventforyou', EventForYouViewSet)
 router.register(r'myevents', SubscribeEventViewSet)
 router.register(r'mybrands', SubscribeBrandViewSet)
-router.register(r'search', SearchViewSet)    # post 용도로만
+# router.register(r'search', Search)    # post 용도로만
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('search/', Search.as_view()),
+    path('weekly/', Weekly.as_view()),
     path('eventforyou', view_eventforyou.EventforyouView.as_view(),name = "eventforyou"),
 ]
