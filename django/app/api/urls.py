@@ -17,7 +17,7 @@ from .view_event import EventViewSet
 
 from .view_subscribeEvent import SubscribeEventViewSet
 from .view_subscribeBrand import SubscribeBrandViewSet
-from .view_search import SearchViewSet
+from .views_search import Search
 from . import view_eventforyou
 
 
@@ -39,9 +39,10 @@ router.register(r'events', EventViewSet)
 # router.register(r'eventforyou', EventForYouViewSet)
 router.register(r'myevents', SubscribeEventViewSet)
 router.register(r'mybrands', SubscribeBrandViewSet)
-router.register(r'search', SearchViewSet)    # post 용도로만
+# router.register(r'search', Search)    # post 용도로만
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('search/', Search.as_view()),
     path('eventforyou', view_eventforyou.EventforyouView.as_view(),name = "eventforyou"),
 ]
