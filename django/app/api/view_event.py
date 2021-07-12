@@ -8,6 +8,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 class EventFilter(FilterSet):
+    category = filters.NumberFilter(field_name="category")
+    brand = filters.NumberFilter(field_name="brand")
+    event = filters.NumberFilter(field_name="id")
+
+    class Meta:
+        model = Event
+        fields = ['category', 'brand', 'event']
+
+
+class EventViewSet(viewsets.ModelViewSet):
     """
         이벤트 목록을 불러오거나 저장/수정/삭제 하는 API
         ---
@@ -22,16 +32,6 @@ class EventFilter(FilterSet):
             - category : 이벤트가 속한 카테고리(Foreign Key)
             - brand : 이벤트가 속한 브랜드(Foreign Key)
     """
-    category = filters.NumberFilter(field_name="category")
-    brand = filters.NumberFilter(field_name="brand")
-    event = filters.NumberFilter(field_name="id")
-
-    class Meta:
-        model = Event
-        fields = ['category', 'brand', 'event']
-
-
-class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.all()
     filter_backends = (DjangoFilterBackend,)
