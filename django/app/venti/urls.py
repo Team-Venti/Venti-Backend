@@ -20,7 +20,12 @@ from drf_yasg import openapi
 from django.conf.urls import url
 import account.views
 
-schema_url_patterns = [path('api/', include('api.urls')), ]
+schema_url_patterns = [
+    path('login/', account.views.login, name='login'),
+    path('signup/', account.views.signup, name='signup'),
+    path('logout/', account.views.logout, name='logout'),
+    path('api/', include('api.urls')),
+]
 schema_view = get_schema_view(openapi.Info(title="Django API", default_version='v1', terms_of_service="https://www.google.com/policies/terms/", ), public=True,
 patterns=schema_url_patterns,)
 
