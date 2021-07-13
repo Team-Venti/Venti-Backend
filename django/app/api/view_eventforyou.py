@@ -24,11 +24,12 @@ class EventforyouView(APIView):
         subscribebrands = SubscribeBrand.objects.filter(user=user)
         for i in subscribebrands :
             eventforyou = Event.objects.filter(brand=i.brand)
-            events.append(eventforyou)
+            for j in eventforyou.values() :
+                events.append(j)
         # 로그인 한다
-        # return Response({'eventforyou': events})
+        # return HttpResponse(events)
         # return JsonResponse({'eventforyou' : events})
-        return HttpResponse(events)
+        return JsonResponse({'eventforyou' : events})
     def get(self, request):
         user = request.GET['user']
         return HttpResponse(user)

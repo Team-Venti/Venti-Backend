@@ -4,22 +4,48 @@ from api.models import User
 from django.contrib import auth
 from api.models import Event, Brand
 from django.http import HttpResponse
+from rest_framework import viewsets
 from rest_framework.views import APIView
+from .serializers import UserSerializer
 # Create your views here.
 
-
 # 회원 가입
-class SignupView(APIView):
-    def post(self, request):
-        # password와 confirm에 입력된 값이 같다면
-        if request.POST['password'] == request.POST['confirm']:
-            # user 객체를 새로 생성
-            user = User.objects.create_user(username=request.POST['username'], password=request.POST['password'])
-            # 로그인 한다
-            auth.login(request, user)
-            return redirect('/')
-    # signup으로 GET 요청이 왔을 때, 회원가입 화면을 띄워준다.
-        return render(request, 'signup.html')
+class SignupViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = SubscribeEventFilter
+
+#     def post(self, request):
+#         # password와 confirm에 입력된 값이 같다면
+#         if request.POST['password'] == request.POST['confirm']:
+#             # user 객체를 새로 생성
+#             user = User.objects.create_user(username=request.POST['username'], password=request.POST['password'])
+#             # 로그인 한다
+#             auth.login(request, user)
+#             return redirect('/')
+#     # signup으로 GET 요청이 왔을 때, 회원가입 화면을 띄워준다.
+#         return render(request, 'signup.html')
+#
+#
+# class ModifyProfileView(APIView):
+#     def post(self, request):
+#         # password와 confirm에 입력된 값이 같다면
+#         if request.POST['password'] == request.POST['confirm']:
+#             # user 객체를 새로 생성
+#             username = request.POST['username']
+#             password = request.POST['password']
+#
+#             # 해당 username과 password와 일치하는 user 객체를 가져온다.
+#             user = auth.authenticate(request, username=username, password=password)
+#             if user is not None :
+#                 user.password = request.POST['newpassword']
+#                 user.save()
+#                 # 로그인 한다
+#                 auth.login(request, user)
+#                 return redirect('/')
+#         # signup으로 GET 요청이 왔을 때, 회원가입 화면을 띄워준다.
+#         return redirect('/')
 
 
 # 로그인
