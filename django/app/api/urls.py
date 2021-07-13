@@ -14,7 +14,7 @@ from .view_event import EventViewSet
 from .view_subscribeEvent import SubscribeEventViewSet
 from .view_subscribeBrand import SubscribeBrandViewSet
 from .views_search import Search
-from . import view_eventforyou
+from .view_eventforyou import EventforyouView
 from .view_weekly import Weekly
 
 # 추가
@@ -41,5 +41,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('search/', Search.as_view()),
     path('weekly/', Weekly.as_view()),
-    path('eventforyou', view_eventforyou.EventforyouView.as_view(),name = "eventforyou"),
+    path('eventforyou/', EventforyouView.as_view(),name = "eventforyou"),
 ]

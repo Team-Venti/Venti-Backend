@@ -22,9 +22,9 @@ import account.views
 from account import views
 
 schema_url_patterns = [
-    path('login/', account.views.login, name='login'),
-    path('signup/', account.views.signup, name='signup'),
-    path('logout/', account.views.logout, name='logout'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('signup/', views.SignupView.as_view(), name='signup'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
     path('api/', include('api.urls')),
 ]
 schema_view = get_schema_view(openapi.Info(title="Django API", default_version='v1', terms_of_service="https://www.google.com/policies/terms/", ), public=True,
@@ -33,9 +33,9 @@ patterns=schema_url_patterns,)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('login/', views.LoginView, name='login'),
-    path('signup/', views.SignupView, name='signup'),
-    path('logout/', views.LogoutView, name='logout'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('signup/', views.SignupView.as_view(), name='signup'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
     path('', account.views.home, name='home'),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

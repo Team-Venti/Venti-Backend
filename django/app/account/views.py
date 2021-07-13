@@ -4,7 +4,7 @@ from api.models import User
 from django.contrib import auth
 from api.models import Event, Brand
 from django.http import HttpResponse
-from django.views import APIView
+from rest_framework.views import APIView
 # Create your views here.
 
 
