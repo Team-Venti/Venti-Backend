@@ -13,6 +13,12 @@ from rest_framework.parsers import JSONParser
 # eventforyou
 # @renderer_classes([renderers.OpenAPIRenderer, renderers.SwaggerUIRenderer])
 class EventforyouView(APIView):
+    """
+         메인페이지의 EventForYou 이벤트 목록을 불러오는 API
+         ---
+         # 내용
+             - eventforyou : [EventForYou 이벤트 목록]
+     """
     model = Event, SubscribeBrand
     # post : post 로 날라온 유저의 eventforyou 찾아주기
     def post(self, request):
