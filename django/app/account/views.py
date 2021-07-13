@@ -13,8 +13,6 @@ from .serializers import UserSerializer
 class SignupViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = SubscribeEventFilter
 
 #     def post(self, request):
 #         # password와 confirm에 입력된 값이 같다면
