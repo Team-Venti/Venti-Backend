@@ -20,24 +20,27 @@ from drf_yasg import openapi
 from django.conf.urls import url
 import account.views
 from account import views
+from rest_framework.routers import DefaultRouter
 
 schema_url_patterns = [
     path('login/', views.LoginView.as_view(), name='login'),
-    path('signup/', views.SignupView.as_view(), name='signup'),
+    # path('signup/', views.SignupView.as_view(), name='signup'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
-    path('modifyProfile/', views.ModifyProfileView.as_view(), name='modify'),
     path('api/', include('api.urls')),
 ]
 schema_view = get_schema_view(openapi.Info(title="Django API", default_version='v1', terms_of_service="https://www.google.com/policies/terms/", ), public=True,
 patterns=schema_url_patterns,)
 
+router = DefaultRouter()
+router.register(r'signup', views.SignupViewSet)
+
 urlpatterns = [
+path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('login/', views.LoginView.as_view(), name='login'),
-    path('signup/', views.SignupView.as_view(), name='signup'),
+    # path('signup/', views.SignupView.as_view(), name='signup'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
-    path('modifyProfile/', views.ModifyProfileView.as_view(), name='modify'),
     path('', account.views.home, name='home'),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

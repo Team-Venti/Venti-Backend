@@ -6,7 +6,7 @@ from api.models import Event, Brand
 from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.views import APIView
-from .serializers import UserSerializer
+from api.serializers import UserSerializer
 # Create your views here.
 
 # 회원 가입
