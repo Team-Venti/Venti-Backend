@@ -20,10 +20,27 @@ from rest_framework import viewsets
 from django_filters.rest_framework import FilterSet, filters, DjangoFilterBackend
 # Permission
 from rest_framework import permissions
+
+
 # Create your views here.
 
 # ViewSet으로 class
-class UserViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class UserViewSet(viewsets.ModelViewSet):
+    """
+        유저 목록을 불러오거나 저장/수정/삭제 하는 API
+        ---
+        # 예시
+            - GET /api/user/
+            - POST /api/user/
+            - DELETE /api/user/{id}
+        # parameter
+            - username : 유저의 아이디
+            - nickname : 유저의 닉네임
+            - password : 유저의 패스워드
+            - email : 유저의 이메일
+            - gender : 유저의 성별
+            - birth : 유저의 생일
+    """
     serializer_class = UserSerializer
     queryset = User.objects.all()
     # filter_backends = [DjangoFilterBackend]

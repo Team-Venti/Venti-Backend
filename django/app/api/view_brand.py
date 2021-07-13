@@ -20,7 +20,12 @@ class BrandViewSet(viewsets.ModelViewSet):
     """
         브랜드 목록을 불러오거나 저장/수정/삭제 하는 API
         ---
-        # 내용
+        # 예시
+            - GET /api/brands/
+            - GET /api/brands/?category=1
+            - GET /api/brands/{id}
+
+        # parameter
             - name : 브랜드 이름
             - image : 브랜드 대표 이미지
             - text : 브랜드 설명

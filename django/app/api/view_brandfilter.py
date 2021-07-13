@@ -15,7 +15,9 @@ class BrandFilter(APIView):
     """
         브랜드 필터링을 거친 이벤트 목록을 불러오는 API
         ---
-        # 내용
+        # 예시
+            - POST /api/brandfilter/
+        # parameter
             - event_list:[필터링 이벤트 목록]
     """
     # 프엔과 합의해서 category는 어떻게 넘겨줄지 고민

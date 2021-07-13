@@ -12,9 +12,11 @@ class Weekly(APIView):
     """
         인기 이벤트를 불러오거나 저장/수정/삭제 하는 API
         ---
-        # 내용
+        # 예시
+            - GET /api/weekly/
+        # parameter
             - result : [인기 이벤트 목록]
     """
 
-    def post(self, request, format=None):
+    def get(self, request, format=None):
         data = JSONParser().parse(request)

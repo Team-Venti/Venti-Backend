@@ -18,7 +18,9 @@ class Search(APIView):
     """
         검색한 브랜드/이벤트 목록을 불러오는 API
         ---
-        # 내용
+        # 예시
+            - GET /api/search/?name=vips
+        # parameter
             - search_event: [검색한 이벤트 목록]
             - search_brand: [검색한 브랜드 목록]
     """

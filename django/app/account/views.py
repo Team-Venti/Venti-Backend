@@ -49,6 +49,15 @@ class SignupViewSet(viewsets.ModelViewSet):
 # 로그인
 class LoginView(APIView):
     # login으로 POST 요청이 들어왔을 때, 로그인 절차를 밟는다.
+    """
+        유저의 로그인을 요청하는 API
+        ---
+        # 예시
+            - POST /login/
+        # parameter
+            - username: 유저의 아이디
+            - password: 유저의 패스워드
+    """
     def post(self, request):
         # login.html에서 넘어온 username과 password를 각 변수에 저장한다.
         username = request.POST['username']
@@ -75,6 +84,14 @@ class LoginView(APIView):
 # 로그 아웃
 class LogoutView(APIView):
     # logout으로 POST 요청이 들어왔을 때, 로그아웃 절차를 밟는다.
+    """
+        유저의 로그아웃을 요청하는 API
+        ---
+        # 예시
+            - POST /logout/
+        # parameter
+            X
+    """
     def post(self,request):
         auth.logout(request)
         return redirect('/')

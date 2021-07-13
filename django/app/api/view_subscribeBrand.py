@@ -19,7 +19,12 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
     """
         유저의 브랜드 구독 목록을 불러오거나 저장/삭제 하는 API
         ---
-        # 내용
+        # 예시
+            - GET /api/mybrands/
+            - GET /api/mybrands/?user=1
+            - POST /api/mybrands/
+            - DELETE /api/mybrands/{id}
+        # parameter
             - user : 어떤 유저가 구독 했는지 (Foreign Key)
             - brand : 어떤 브랜드를 구독 했는지 (Foreign Key)
     """

@@ -21,7 +21,12 @@ class EventViewSet(viewsets.ModelViewSet):
     """
         이벤트 목록을 불러오거나 저장/수정/삭제 하는 API
         ---
-        # 내용
+        # 예시
+            - GET /api/events/
+            - GET /api/events/?catogory=1
+            - GET /api/events/?brand=1
+            - GET /api/events/{id}
+        # parameter
             - name : 이벤트 이름
             - image : 이벤트 대표 이미지
             - banner_image : '인기 이벤트'에 띄우기 위한 크기가 다른 이미지
