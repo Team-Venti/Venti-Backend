@@ -1,3 +1,4 @@
+# coding=utf-8
 from rest_framework import viewsets
 from .models import Brand, SubscribeBrand
 from .serializer_brand import BrandSerializer

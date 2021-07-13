@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.urls import path, include
 from api import views
 from .views import UserViewSet
