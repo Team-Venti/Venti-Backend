@@ -38,6 +38,8 @@ class EventforyouView(APIView):
         # return HttpResponse(events)
         # return JsonResponse({'eventforyou' : events})
         return JsonResponse({'eventforyou' : events})
+
+
     def get(self, request):
         user = request.GET['user']
         return HttpResponse(user)
