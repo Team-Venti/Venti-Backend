@@ -21,13 +21,15 @@ class BrandFilter(APIView):
         # parameter
             - event_list:[필터링 이벤트 목록]
     """
-    # 프엔과 합의해서 category는 어떻게 넘겨줄지 고민
+
     def post(self, request, format=None):
         data = JSONParser().parse(request)
         arr = []
+        category = data['category']
         for i in data['brand']:
-            result_set = Event.objects.filter(brand=i)
-            arr.append(list(result_set.values()))
+            result_set = Event.objects.filter(brand=i, category=category)
+            if len(list(result_set)) != 0:
+                arr.append(list(result_set.values()))
 
         return JsonResponse({'event_list': arr}, status=200)
 
