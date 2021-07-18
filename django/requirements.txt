@@ -6,7 +6,10 @@ requests
 cryptography
 gunicorn==20.0.4
 djangorestframework
+djangorestframework-jwt
 django-filter
+django-rest-auth
+django-allauth
 asgiref
 pytz
 sqlparse

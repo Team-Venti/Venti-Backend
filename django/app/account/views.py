@@ -1,113 +1,65 @@
+
 # coding=utf-8
-from django.shortcuts import render, redirect
-from api.models import User
-from django.contrib import auth
-from api.models import Event, Brand
-from django.http import HttpResponse
-from rest_framework import viewsets
-from rest_framework.views import APIView
-from api.serializers import UserSerializer
-# Create your views here.
+from rest_framework import status, mixins
 
-# 회원 가입
-class SignupViewSet(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+# FBV
+from rest_framework.response import Response
 
-#     def post(self, request):
-#         # password와 confirm에 입력된 값이 같다면
-#         if request.POST['password'] == request.POST['confirm']:
-#             # user 객체를 새로 생성
-#             user = User.objects.create_user(username=request.POST['username'], password=request.POST['password'])
-#             # 로그인 한다
-#             auth.login(request, user)
-#             return redirect('/')
-#     # signup으로 GET 요청이 왔을 때, 회원가입 화면을 띄워준다.
-#         return render(request, 'signup.html')
-#
-#
-# class ModifyProfileView(APIView):
-#     def post(self, request):
-#         # password와 confirm에 입력된 값이 같다면
-#         if request.POST['password'] == request.POST['confirm']:
-#             # user 객체를 새로 생성
-#             username = request.POST['username']
-#             password = request.POST['password']
-#
-#             # 해당 username과 password와 일치하는 user 객체를 가져온다.
-#             user = auth.authenticate(request, username=username, password=password)
-#             if user is not None :
-#                 user.password = request.POST['newpassword']
-#                 user.save()
-#                 # 로그인 한다
-#                 auth.login(request, user)
-#                 return redirect('/')
-#         # signup으로 GET 요청이 왔을 때, 회원가입 화면을 띄워준다.
-#         return redirect('/')
+from rest_framework import generics  # generics class-based view 사용할 계획
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.decorators import permission_classes, authentication_classes
+
+# JWT 사용을 위해 필요
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
+
+from .serializers import *
+from .models import *
+
+# 누구나 접근 가능
+@permission_classes([AllowAny])
+class Registration(generics.GenericAPIView):
+    serializer_class = CustomRegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
+
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save(request)  # request 필요 -> 오류 발생
+        return Response(
+            {
+                # get_serializer_context: serializer에 포함되어야 할 어떠한 정보의 context를 딕셔너리 형태로 리턴
+                # 디폴트 정보 context는 request, view, format
+                "user": UserSerializer(
+                    user, context=self.get_serializer_context()
+                ).data
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
-# 로그인
-class LoginView(APIView):
-    # login으로 POST 요청이 들어왔을 때, 로그인 절차를 밟는다.
-    """
-        유저의 로그인을 요청하는 API
-        ---
-        # 예시
-            - POST /login/
-        # parameter
-            - username: 유저의 아이디
-            - password: 유저의 패스워드
-    """
-    def post(self, request):
-        # login.html에서 넘어온 username과 password를 각 변수에 저장한다.
-        username = request.POST['username']
-        password = request.POST['password']
+@permission_classes([AllowAny])
+class Login(generics.GenericAPIView):
+    serializer_class = UserLoginSerializer
 
-        # 해당 username과 password와 일치하는 user 객체를 가져온다.
-        user = auth.authenticate(request, username=username, password=password)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
 
-        # 해당 user 객체가 존재한다면
-        if user is not None:
-            # 로그인 한다
-            auth.login(request, user)
-            request.session['user'] = user.id
-            return redirect('/')
-        # 존재하지 않는다면
-        else:
-            # 딕셔너리에 에러메세지를 전달하고 다시 login.html 화면으로 돌아간다.
-            return render(request, 'login.html', {'error': 'username or password is incorrect.'})
-    # login으로 GET 요청이 들어왔을때, 로그인 화면을 띄워준다.
-    def get(self,request):
-        return render(request, 'login.html')
+        if not serializer.is_valid(raise_exception=True):
+            return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
 
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data
+        if user['username'] == "None":
+            return Response({"message": "fail"}, status=status.HTTP_401_UNAUTHORIZED)
 
-# 로그 아웃
-class LogoutView(APIView):
-    # logout으로 POST 요청이 들어왔을 때, 로그아웃 절차를 밟는다.
-    """
-        유저의 로그아웃을 요청하는 API
-        ---
-        # 예시
-            - POST /logout/
-        # parameter
-            X
-    """
-    def post(self,request):
-        auth.logout(request)
-        return redirect('/')
-
-    # logout으로 GET 요청이 들어왔을 때, 로그인 화면을 띄워준다.
-    def get(request):
-        return render(request, 'login.html')
-
-
-def home(request):
-    user_pk = request.session.get('user')  # login함수에서 추가해준 requests.session['user'] = fuser.id
-    events = Event.objects.all()
-    brands = Brand.objects.all()
-
-    if user_pk:  # 세션에 user_pk 정보가 존재하면
-        user = User.objects.get(pk=user_pk)
-        return render(request, 'home.html',{'events' : events, 'brands' : brands})  # 해당 유저의 Fuser모델의 username 전달
-
-    return render(request, 'home.html', {'events': events, 'brands': brands})  # 세션에 유저 정보 없으면 그냥 home으로
+        return Response(
+            {
+                "user": UserSerializer(
+                    user, context=self.get_serializer_context()
+                ).data,
+                "token": user['token']
+            }
+        )

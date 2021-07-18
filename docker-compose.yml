@@ -15,7 +15,7 @@ services:
 
   mysql:
     image: mariadb:latest
-    container_name: mysqla
+    container_name: mysql
     expose:
       - "3306"
     environment:
