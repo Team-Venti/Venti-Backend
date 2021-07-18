@@ -7,3 +7,9 @@ class SubscribeBrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubscribeBrand
         fields = '__all__'
+
+
+class UseridSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubscribeBrand
+        fields = ['user']
