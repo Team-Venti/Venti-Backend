@@ -1,21 +1,34 @@
 # coding=utf-8
 from rest_framework import viewsets
-from .models import Event, SubscribeEvent
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
+
+from .models import Event, Brand
 from .serializer_event import EventSerializer, EventForYouSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
+
 
 # 이벤트 메인, 이벤트 필터, 브랜드 상세, 이벤트 상세
 
 
 class EventFilter(FilterSet):
     category = filters.NumberFilter(field_name="category")
-    brand = filters.NumberFilter(field_name="brand")
+    brand = filters.CharFilter(method='brand_filter')
     event = filters.NumberFilter(field_name="id")
 
     class Meta:
         model = Event
         fields = ['category', 'brand', 'event']
+
+    def brand_filter(self, queryset, name, value):
+        qs0 = queryset.filter(brand=0)  # 빈 쿼리셋
+        for i in range(len(value)):
+            if i % 2 == 1:
+                qs1 = queryset.filter(brand=value[i])
+                qs0 = qs0.union(qs1)
+        filtered_queryset = qs0
+        return filtered_queryset
 
 
 class EventViewSet(viewsets.ModelViewSet):
