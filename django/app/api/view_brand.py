@@ -26,11 +26,6 @@ class BrandViewSet(viewsets.ModelViewSet):
             - GET /api/brands/?category=1
             - GET /api/brands/{id}
 
-        # parameter
-            - name : 브랜드 이름
-            - image : 브랜드 대표 이미지
-            - text : 브랜드 설명
-            - category : 브랜드가 속한 카테고리(Foreign Key)
     """
     serializer_class = BrandSerializer
     queryset = Brand.objects.all()

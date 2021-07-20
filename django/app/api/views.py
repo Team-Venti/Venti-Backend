@@ -34,13 +34,6 @@ class UserViewSet(viewsets.ModelViewSet):
             - GET /api/user/
             - POST /api/user/
             - DELETE /api/user/{id}
-        # parameter
-            - username : 유저의 아이디
-            - nickname : 유저의 닉네임
-            - password : 유저의 패스워드
-            - email : 유저의 이메일
-            - gender : 유저의 성별
-            - birth : 유저의 생일
     """
     serializer_class = UserSerializer
     queryset = User.objects.all()

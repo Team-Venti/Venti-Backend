@@ -15,11 +15,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 class EventFilter(FilterSet):
     category = filters.NumberFilter(field_name="category")
     brand = filters.CharFilter(method='brand_filter')
-    event = filters.NumberFilter(field_name="id")
 
     class Meta:
         model = Event
-        fields = ['category', 'brand', 'event']
+        fields = ['category', 'brand']
 
     def brand_filter(self, queryset, name, value):
         qs0 = queryset.filter(brand=0)  # 빈 쿼리셋
@@ -38,7 +37,7 @@ class EventViewSet(viewsets.ModelViewSet):
         # 예시
             - GET /api/events/
             - GET /api/events/?catogory=1
-            - GET /api/events/?brand=1
+            - GET /api/events/?brand=[1,3,5]
             - GET /api/events/{id}
         # parameter
             - name : 이벤트 이름

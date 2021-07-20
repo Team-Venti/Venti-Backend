@@ -1,17 +1,59 @@
 from django.http import JsonResponse
-from rest_framework import viewsets
-from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-
 from .models import Event, Brand
-from .serializer_search import SearchSerializer
-from .serializer_brand import BrandSerializer
-from .serializer_event import EventSerializer
-from django_filters.rest_framework import FilterSet, filters
-from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
-
-# 검색 - 미완
+response_schema_dict = {
+    "200": openapi.Response(
+        description="검색 결과를 보여준다.",
+        examples={
+            "application/json": {
+                    "search_event": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-11",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "v",
+                            "due": "2021-07-21",
+                            "weekly_view": 4,
+                            "url": "www.naver.com"
+                        },
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-11",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event2",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "vv",
+                            "due": "2021-07-21",
+                            "weekly_view": 3,
+                            "url": "www.naver.com"
+                        }
+                    ],
+                    "search_brand": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-11",
+                            "category_id": 1,
+                            "image": "",
+                            "name": "vips",
+                            "text": "no1. stake house"
+                        }
+                    ]
+            }
+        }
+    )
+}
 
 
 class Search(APIView):
@@ -19,13 +61,15 @@ class Search(APIView):
         검색한 브랜드/이벤트 목록을 불러오는 API
         ---
         # 예시
-            - GET /api/search/?name=vips
+            - GET /api/search/?search=vips
         # parameter
+            - search (string, query)
+        # Responses
             - search_event: [검색한 이벤트 목록]
             - search_brand: [검색한 브랜드 목록]
     """
     def get(self, request, format=None):
-        name = request.GET['name']
+        name = request.GET['search']
         event = Event.objects.filter(name__contains=name)
         brand = Brand.objects.filter(name__contains=name)
 

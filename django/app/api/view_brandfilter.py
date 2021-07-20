@@ -14,7 +14,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 class BrandFilter(APIView):
     """
-        브랜드 필터링을 거친 이벤트 목록을 불러오는 API
+        브랜드 필터링을 거친 이벤트 목록을 불러오는 API ( 삭제예정 )
         ---
         # 예시
             - POST /api/brandfilter/

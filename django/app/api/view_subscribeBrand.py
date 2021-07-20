@@ -25,9 +25,6 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
             - GET /api/mybrands/?user=1
             - POST /api/mybrands/
             - DELETE /api/mybrands/{id}
-        # parameter
-            - user : 어떤 유저가 구독 했는지 (Foreign Key)
-            - brand : 어떤 브랜드를 구독 했는지 (Foreign Key)
     """
     serializer_class = SubscribeBrandSerializer
     queryset = SubscribeBrand.objects.all()
