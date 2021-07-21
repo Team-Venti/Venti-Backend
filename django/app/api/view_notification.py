@@ -6,16 +6,23 @@ from .models import Event, Notification
 from .serializer_notification import NotificationSerializer
 
 
-class Notification(APIView):
+class Notifications(APIView):
     """
-        알림을 저장 하는 API
+        알림을 저장 하는 API ( 마감 알림 요청 )
         ---
         # 예시
-            - GET /api/weekly/
+            - POST /api/notifications/
         # parameters
-            - No parameters
+            - "user" : 1 (유저 id)
+            - "notice_type" : "end" (고정)
+            - "event" : 1 (이벤트 id)
+            - "url" : "www.naver.com" (이벤트 url) - NULL 가능
         # Responses
-            - result : [알림 목록]
+            - "user":
+            - "notice_type":
+            - "event":
+            - "brand":
+            - "url":
     """
     def post(self, request):
         data = JSONParser().parse(request)
@@ -26,24 +33,20 @@ class Notification(APIView):
         return JsonResponse(serializer.errors, status=400)
 
 
-# 수정필요
 class NotificationUser(APIView):
     """
         특정 유저의 알림을 불러오는 API
         ---
         # 예시
-            - GET /api/weekly/
+            - POST /api/notifications/users/
         # parameters
-            - No parameters
+            - "users" : 1 (유저 id)
         # Responses
             - result : [알림 목록]
     """
-    def get(self, request):
-        return HttpResponse(status=200)
-
-    def post(self, request):
+    def post(self, request, format=None):
         data = JSONParser().parse(request)
         user = data['user']
-        noti = Notification.objects.filter(user=user)   # .order_by('-id')[30]
+        noti = Notification.objects.filter(user=user).order_by('-id')[:30]   # 30개까지 최신순 정렬
         result = noti.values()
         return JsonResponse({'result': list(result)}, status=200)

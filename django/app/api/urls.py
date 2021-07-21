@@ -17,7 +17,7 @@ from .view_subscribeBrand import SubscribeBrandViewSet
 from .views_search import Search
 from .view_eventforyou import EventforyouView
 from .view_weekly import Weekly
-from .view_notification import Notification, NotificationUser
+from .view_notification import Notifications, NotificationUser
 
 # 추가
 # .view_notification import ~ViewSet
@@ -41,7 +41,7 @@ router.register(r'mybrands', SubscribeBrandViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('notifications/', Notification.as_view()),
+    path('notifications/', Notifications.as_view()),
     path('notifications/users/', NotificationUser.as_view()),
     path('search/', Search.as_view()),
     path('weekly/', Weekly.as_view()),
