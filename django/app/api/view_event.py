@@ -1,8 +1,10 @@
 # coding=utf-8
+from django.http import JsonResponse
 from rest_framework import viewsets
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, action
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
-
+import datetime
 from .models import Event, Brand
 from .serializer_event import EventSerializer, EventForYouSerializer
 from django_filters.rest_framework import FilterSet, filters
@@ -35,7 +37,7 @@ class EventViewSet(viewsets.ModelViewSet):
         이벤트 목록을 불러오거나 저장/수정/삭제 하는 API
         ---
         # 예시
-            - GET /api/events/
+            - GET /api/events
             - GET /api/events/?catogory=1
             - GET /api/events/?brand=[1,3,5]
             - GET /api/events/{id}
@@ -54,3 +56,19 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = EventFilter
+
+    @action(detail=False, methods=['post'])
+    def get_onoff(self, request):
+        data = JSONParser().parse(request)
+        brand_id = data['brand_id']
+        user = data['user']
+        now = datetime.datetime.now()
+        # myevent = SubscribeEvent.objects.filter(user=user)
+        # for i in on:
+        # 하트순 정렬 하려면 _order_by로 못하고 하트인거랑 아닌거 나눠서 해야할듯
+        off = Event.objects.filter(brand=brand_id, due__lte=now)
+        on = Event.objects.filter(brand=brand_id, due__gt=now)
+        off_event = off.values()
+        on_event = on.values()
+        return JsonResponse({'on_event': list(on_event),
+                             'off_event': list(off_event)}, status=200)
