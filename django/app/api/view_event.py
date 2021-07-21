@@ -7,6 +7,10 @@ from .models import Event, Brand
 from .serializer_event import EventSerializer, EventForYouSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
+# jwt
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 
 # 이벤트 메인, 이벤트 필터, 브랜드 상세, 이벤트 상세
@@ -30,6 +34,8 @@ class EventFilter(FilterSet):
         return filtered_queryset
 
 
+@permission_classes([IsAuthenticated,])
+@authentication_classes([JSONWebTokenAuthentication,])
 class EventViewSet(viewsets.ModelViewSet):
     """
         이벤트 목록을 불러오거나 저장/수정/삭제 하는 API

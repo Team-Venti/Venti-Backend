@@ -24,6 +24,8 @@ User = get_user_model()
 # 회원가입
 class CustomRegisterSerializer(RegisterSerializer):
     nickname = serializers.CharField(required=False, max_length=50)
+    gender = serializers.CharField(required=False, max_length=50)
+    birth = serializers.DateField(required=False)
 
     def __init__(self,*args,**kwargs):
         super(CustomRegisterSerializer,self).__init__(*args,**kwargs)
@@ -31,6 +33,8 @@ class CustomRegisterSerializer(RegisterSerializer):
     def get_cleaned_data(self):
         data_dict = super(CustomRegisterSerializer,self).get_cleaned_data() # username, password, email이 디폴트
         data_dict['nickname'] = self.validated_data.get('nickname', '')
+        data_dict['gender'] = self.validated_data.get('gender', '')
+        data_dict['birth'] = self.validated_data.get('birth', '')
 
         return data_dict
 
@@ -63,3 +67,16 @@ class UserLoginSerializer(serializers.Serializer):
             'username': user.username,
             'token': jwt_token
         }
+
+# 회원수정
+class UpdateSerializer(serializers.Serializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'birth', 'gender', 'email']
+
+
+# 회원탈퇴
+class UnsubscribeSerializer(serializers.Serializer):
+    class Meta:
+        model = User
+        fields = ['username']

@@ -14,3 +14,4 @@ asgiref
 pytz
 sqlparse
 drf_yasg
+django-cors-headers

@@ -18,8 +18,9 @@ from drf_yasg import openapi
 # eventforyou
 # @renderer_classes([renderers.OpenAPIRenderer, renderers.SwaggerUIRenderer])
 from drf_yasg.inspectors import SwaggerAutoSchema
-
-
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 response_schema_dict = {
     "200": openapi.Response(
@@ -75,7 +76,8 @@ response_schema_dict = {
     )
 }
 
-
+@permission_classes([])
+@authentication_classes([JSONWebTokenAuthentication,])
 class EventforyouView(APIView):
     """
         메인페이지의 EventForYou 이벤트 목록을 불러오는 API

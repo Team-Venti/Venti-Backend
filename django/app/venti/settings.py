@@ -44,7 +44,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 INSTALLED_APPS = [
     'drf_yasg',
     'api.apps.ApiConfig',
-
+    'corsheaders',
     'rest_framework',
     'rest_auth',
     'rest_framework.authtoken',
@@ -70,16 +70,15 @@ REST_FRAMEWORK = {  # filterset
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication'
+        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
     ),
 }
-
-
-
 
 
 JWT_AUTH = {
@@ -93,7 +92,6 @@ JWT_AUTH = {
         'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
     'JWT_RESPONSE_PAYLOAD_HANDLER':
         'rest_framework_jwt.utils.jwt_response_payload_handler',
-
     'JWT_SECRET_KEY': SECRET_KEY,
     'JWT_GET_USER_SECRET_KEY': None,
     'JWT_PUBLIC_KEY': None,
@@ -102,11 +100,11 @@ JWT_AUTH = {
     'JWT_VERIFY': True,
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LEEWAY': 0,
-    'JWT_EXPIRATION_DELTA': timedelta(days=30),
+    'JWT_EXPIRATION_DELTA': timedelta(days=1),
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
-    'JWT_ALLOW_REFRESH': False,
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=30),
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=1),
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
     'JWT_AUTH_COOKIE': None,
 }
@@ -118,12 +116,15 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'venti.urls'
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
     {
