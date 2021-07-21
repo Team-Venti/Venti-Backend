@@ -24,6 +24,7 @@ class Notifications(APIView):
             - "brand":
             - "url":
     """
+    # 이거는 프엔에서 마감시간때 post 해서 알람디비 채워주는건데 안될것같으면 지워도 될듯
     def post(self, request):
         data = JSONParser().parse(request)
         serializer = NotificationSerializer(data=data)
