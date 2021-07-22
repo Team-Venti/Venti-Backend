@@ -61,10 +61,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_onoff(self, request):
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
-        user = data['user']
         now = datetime.datetime.now()
-        # myevent = SubscribeEvent.objects.filter(user=user)
-        # for i in on:
         # 하트순 정렬 하려면 _order_by로 못하고 하트인거랑 아닌거 나눠서 해야할듯
         off = Event.objects.filter(brand=brand_id, due__lte=now)
         on = Event.objects.filter(brand=brand_id, due__gt=now)
