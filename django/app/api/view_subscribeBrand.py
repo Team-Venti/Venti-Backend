@@ -1,5 +1,9 @@
 # coding=utf-8
+from django.http import JsonResponse
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.parsers import JSONParser
+
 from .models import SubscribeBrand
 from .serializer_subscribeBrand import SubscribeBrandSerializer
 from django_filters.rest_framework import FilterSet, filters
@@ -22,11 +26,19 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
         ---
         # 예시
             - GET /api/mybrands/
-            - GET /api/mybrands/?user=1
             - POST /api/mybrands/
+            - POST /api/mybrands/users/
             - DELETE /api/mybrands/{id}
     """
     serializer_class = SubscribeBrandSerializer
     queryset = SubscribeBrand.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = SubscribeBrandFilter
+
+    @action(detail=False, methods=['post'])
+    def users(self, request):
+        data = JSONParser().parse(request)
+        user = data['user']
+        my = SubscribeBrand.objects.filter(user=user)
+        mybrand = my.values()
+        return JsonResponse({'mybrand': list(mybrand)}, status=200)
