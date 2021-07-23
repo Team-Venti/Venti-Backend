@@ -105,12 +105,12 @@ class Unsubscribe(generics.GenericAPIView):
         ---
         # URL
             - POST /accounts/unsubscribe/
-        #header
+        # header
             - Authorization : JWT ey93... [jwt token]
         # 전달 형식 : formdata
             - {
                 username : string   //본인확인용
-                }
+               }
      """
     serializer_class = UnsubscribeSerializer
 
