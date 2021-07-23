@@ -7,8 +7,6 @@ from . import views
 
 urlpatterns = [
     # token
-    path('token/', obtain_jwt_token),
-    path('token/verify/', verify_jwt_token),
     path('token/refresh/', refresh_jwt_token),
     path('create/', views.Registration.as_view()),
     path('login/', views.Login.as_view()),
