@@ -36,8 +36,8 @@ class EventFilter(FilterSet):
         return filtered_queryset
 
 
-@permission_classes([IsAuthenticated,])
-@authentication_classes([JSONWebTokenAuthentication,])
+@permission_classes([IsAuthenticated, ])
+@authentication_classes([JSONWebTokenAuthentication, ])
 class EventViewSet(viewsets.ModelViewSet):
     """
         이벤트 목록을 불러오거나 저장/수정/삭제 하는 API
@@ -67,21 +67,49 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_onoff(self, request):
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
+        user_id = data['user_id']
+        subscribe = SubscribeEvent.objects.filter(user=user_id)
         now = datetime.datetime.now()
         # 하트순 정렬 하려면 _order_by로 못하고 하트인거랑 아닌거 나눠서 해야할듯
         off = Event.objects.filter(brand=brand_id, due__lte=now)
         on = Event.objects.filter(brand=brand_id, due__gt=now)
+        on_subscribe = []
+        off_subscribe = []
+        for i in on:
+            for j in subscribe:
+                if i.id == j.event.id:
+                    on_subscribe.append("Yes")
+                    break
+            else:
+                on_subscribe.append("No")
+        for i in off:
+            for j in subscribe:
+                if i.id == j.event.id:
+                    off_subscribe.append("Yes")
+                    break
+            else:
+                off_subscribe.append("No")
         off_event = off.values()
         on_event = on.values()
         return JsonResponse({'on_event': list(on_event),
-                             'off_event': list(off_event)}, status=200)
+                             'on_subscribe': on_subscribe,
+                             'off_event': list(off_event),
+                             'off_subscribe': off_subscribe}, status=200)
 
     @action(detail=False, methods=['post'])
     def get_main(self, request):
         data = JSONParser().parse(request)
         category_id = data['category_id']
         user_id = data['user_id']
-        events = Event.objects.filter(category=category_id)
+        brand_id = data['brand_id']
+        events = Event.objects.none()
+        if len(brand_id) == 0:
+            events = Event.objects.filter(category=category_id)
+        else:
+            for i in brand_id:
+                event = Event.objects.filter(brand=i, category=category_id)
+                events = events.union(event)
+
         subscribes = SubscribeEvent.objects.filter(user=user_id)
         subscribe = []
         for i in events:
@@ -91,6 +119,24 @@ class EventViewSet(viewsets.ModelViewSet):
                     break
             else:
                 subscribe.append("No")
+        event = events.values()
+        return JsonResponse({'event': list(event),
+                             'subscribe': subscribe}, status=200)
+
+    @action(detail=False, methods=['post'])
+    def get_detail(self, request):
+        data = JSONParser().parse(request)
+        event_id = data['event_id']
+        user_id = data['user_id']
+        events = Event.objects.filter(id=event_id)
+        subscribes = SubscribeEvent.objects.filter(user=user_id)
+        subscribe = []
+        for i in subscribes:
+            if events[0].id == i.event.id:
+                subscribe.append("Yes")
+                break
+        else:
+            subscribe.append("No")
         event = events.values()
         return JsonResponse({'event': list(event),
                              'subscribe': subscribe}, status=200)
