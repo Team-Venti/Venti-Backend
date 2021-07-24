@@ -55,3 +55,20 @@ class BrandViewSet(viewsets.ModelViewSet):
         return JsonResponse({'brand': list(brand),
                              'subscribe': subscribe}, status=200)
 
+    @action(detail=False, methods=['post'])
+    def get_detail(self, request):
+        data = JSONParser().parse(request)
+        brand_id = data['brand_id']
+        user_id = data['user_id']
+        brands = Brand.objects.filter(id=brand_id)
+        subscribes = SubscribeBrand.objects.filter(user=user_id)
+        subscribe = []
+        for j in subscribes:
+            if brands[0].id == j.brand.id:
+                subscribe.append("Yes")
+                break
+        else:
+            subscribe.append("No")
+        brand = brands.values()
+        return JsonResponse({'brand': list(brand),
+                             'subscribe': subscribe}, status=200)
