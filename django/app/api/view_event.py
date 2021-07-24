@@ -5,7 +5,7 @@ from rest_framework.decorators import permission_classes, action
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 import datetime
-from .models import Event, Brand
+from .models import Event, Brand, SubscribeEvent
 from .serializer_event import EventSerializer, EventForYouSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -75,3 +75,22 @@ class EventViewSet(viewsets.ModelViewSet):
         on_event = on.values()
         return JsonResponse({'on_event': list(on_event),
                              'off_event': list(off_event)}, status=200)
+
+    @action(detail=False, methods=['post'])
+    def get_main(self, request):
+        data = JSONParser().parse(request)
+        category_id = data['category_id']
+        user_id = data['user_id']
+        events = Event.objects.filter(category=category_id)
+        subscribes = SubscribeEvent.objects.filter(user=user_id)
+        subscribe = []
+        for i in events:
+            for j in subscribes:
+                if i.id == j.event.id:
+                    subscribe.append("Yes")
+                    break
+            else:
+                subscribe.append("No")
+        event = events.values()
+        return JsonResponse({'event': list(event),
+                             'subscribe': subscribe}, status=200)
