@@ -13,6 +13,7 @@ class DateInfo(models.Model):
 class User(AbstractUser, DateInfo):
     birth = models.DateField(null=True)
     gender = models.CharField(max_length=10, null=True)  # male / female
+    nickname = models.CharField(max_length=20, unique=True)
 
 
 class Category(DateInfo):
@@ -39,7 +40,7 @@ class Event(DateInfo):
     image = models.ImageField(null=True)
     banner_image = models.ImageField(null=True)
     text = models.TextField(null=True)
-    due = models.DateField(null=True)
+    due = models.DateTimeField(null=True)
     weekly_view = models.IntegerField(null=True)
     url = models.URLField(null=True)
 
@@ -51,11 +52,11 @@ class Notification(DateInfo):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="notifications", null=True)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="notifications", null=True)
-    notice_type = models.CharField(max_length=10)   # new / end
+    notice_type = models.CharField(max_length=10)  # new / end
     url = models.URLField(null=True)
 
     def __str__(self):
-        return str(self.user.username)+"의 "+str(self.event)+" 이벤트 알림"
+        return str(self.user.username) + "의 " + str(self.event) + " 이벤트 알림"
 
 
 class SubscribeBrand(DateInfo):
@@ -63,7 +64,7 @@ class SubscribeBrand(DateInfo):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="subscribebrands")
 
     def __str__(self):
-        return str(self.user.username)+"의 "+str(self.brand)+" 브랜드 구독"
+        return str(self.user.username) + "의 " + str(self.brand) + " 브랜드 구독"
 
 
 class SubscribeEvent(DateInfo):
@@ -71,4 +72,4 @@ class SubscribeEvent(DateInfo):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="subscribeevents")
 
     def __str__(self):
-        return str(self.user.username)+"의 "+str(self.event)+" 이벤트 좋아요"
+        return str(self.user.username) + "의 " + str(self.event) + " 이벤트 좋아요"
