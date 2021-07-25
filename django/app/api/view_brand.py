@@ -1,5 +1,9 @@
 # coding=utf-8
+from django.http import JsonResponse
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.parsers import JSONParser
+
 from .models import Brand, SubscribeBrand
 from .serializer_brand import BrandSerializer
 from django_filters.rest_framework import FilterSet, filters
@@ -32,3 +36,39 @@ class BrandViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = BrandFilter
 
+    @action(detail=False, methods=['post'])
+    def get_main(self, request):
+        data = JSONParser().parse(request)
+        category_id = data['category_id']
+        user_id = data['user_id']
+        brands = Brand.objects.filter(category=category_id)
+        subscribes = SubscribeBrand.objects.filter(user=user_id)
+        subscribe = []
+        for i in brands:
+            for j in subscribes:
+                if i.id == j.brand.id:
+                    subscribe.append("Yes")
+                    break
+            else:
+                subscribe.append("No")
+        brand = brands.values()
+        return JsonResponse({'brand': list(brand),
+                             'subscribe': subscribe}, status=200)
+
+    @action(detail=False, methods=['post'])
+    def get_detail(self, request):
+        data = JSONParser().parse(request)
+        brand_id = data['brand_id']
+        user_id = data['user_id']
+        brands = Brand.objects.filter(id=brand_id)
+        subscribes = SubscribeBrand.objects.filter(user=user_id)
+        subscribe = []
+        for j in subscribes:
+            if brands[0].id == j.brand.id:
+                subscribe.append("Yes")
+                break
+        else:
+            subscribe.append("No")
+        brand = brands.values()
+        return JsonResponse({'brand': list(brand),
+                             'subscribe': subscribe}, status=200)
