@@ -4,7 +4,11 @@ from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from .models import Event, Notification
 from .serializer_notification import NotificationSerializer
-
+from django.views.decorators.csrf import csrf_exempt
+from background_task import background
+from .models import *
+from rest_framework.decorators import authentication_classes, permission_classes
+from datetime import datetime, timedelta
 
 class Notifications(APIView):
     """
@@ -51,3 +55,22 @@ class NotificationUser(APIView):
         noti = Notification.objects.filter(user=user).order_by('-id')[:30]   # 30개까지 최신순 정렬
         result = noti.values()
         return JsonResponse({'result': list(result)}, status=200)
+
+
+@permission_classes([])
+@authentication_classes([])
+@background(schedule=1)
+def noti():
+    # 현재 시간 가져오기
+    now = datetime.now().strftime("%Y-%m-%d")
+    # 12시간 전
+    now12 = datetime.now() - timedelta(hours=12)
+    # 12시간 전 이벤트들
+    endevent12 = Event.objects.filter(due=now)
+    Category.objects.create(name=now)
+    # 이 이벤트를 좋아하는 유저 찾기
+    for i in endevent12:
+        likeevents = SubscribeEvent.objects.filter(event = i.id)
+        Category.objects.create(name = i.id)
+        for j in likeevents:
+            Notification.objects.create( user = j.user, event = i.id, brand = i.brand,notice_type = "end", url = "/event/?pk=1")

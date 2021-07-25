@@ -9,7 +9,7 @@ from rest_framework.routers import DefaultRouter
 # .view_join import ~ViewSet
 # .view_mainpage import ~ViewSet
 # 준기
-
+from . import view_notification
 from .view_brand import BrandViewSet
 from .view_event import EventViewSet
 from .view_subscribeEvent import SubscribeEventViewSet
@@ -17,8 +17,7 @@ from .view_subscribeBrand import SubscribeBrandViewSet
 from .views_search import Search
 from .view_eventforyou import EventforyouView
 from .view_weekly import Weekly
-from .view_notification import Notifications, NotificationUser
-
+from .view_notification import *
 # 추가
 # .view_notification import ~ViewSet
 # 관리자 기능? 관련
@@ -43,6 +42,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('notifications/', Notifications.as_view()),
     path('notifications/users/', NotificationUser.as_view()),
+    path('noti/', view_notification.noti),
     path('search/', Search.as_view()),
     path('weekly/', Weekly.as_view()),
     path('eventforyou/', EventforyouView.as_view(),name = "eventforyou"),
