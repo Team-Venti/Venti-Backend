@@ -44,7 +44,52 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
             description="마이 벤티의 모든 좋아요 목록과 진행/마감 정보를 제공하는 API",
             examples={
                 "application/json": {
-
+                    "on_event": [
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event2",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "vv",
+                            "due": "2021-12-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        }
+                    ],
+                    "off_event": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "v",
+                            "due": "2021-02-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        },
+                        {
+                            "id": 3,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 2,
+                            "brand_id": 3,
+                            "name": "star_Event1",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "s1",
+                            "due": "2019-02-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        }
+                    ]
                 }
             }
         )

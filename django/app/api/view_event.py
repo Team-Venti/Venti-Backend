@@ -1,11 +1,15 @@
 # coding=utf-8
 from django.http import JsonResponse
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import permission_classes, action
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 import datetime
-from .models import Event, Brand, SubscribeEvent
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.response import Response
+
+from .models import Event, Brand, SubscribeEvent, Notification
 from .serializer_event import EventSerializer, EventForYouSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -63,6 +67,75 @@ class EventViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = EventFilter
 
+    response_schema_dict3 = {
+        "200": openapi.Response(
+            description="특정 브랜드의 모든 이벤트 목록과 구독 정보, 진행/마감 정보를 제공하는 API",
+            examples={
+                "application/json": {
+                    "on_event": [
+                        {
+                            "id": 3,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event3",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "vvv",
+                            "due": "2021-12-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        }
+                    ],
+                    "on_subscribe": [
+                        "No"
+                    ],
+                    "off_event": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "v",
+                            "due": "2021-02-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        },
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event2",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "vv",
+                            "due": "2010-02-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        }
+                    ],
+                    "off_subscribe": [
+                        "Yes",
+                        "No"
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'brand_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict3)
     @action(detail=False, methods=['post'])
     def get_onoff(self, request):
         data = JSONParser().parse(request)
@@ -96,6 +169,58 @@ class EventViewSet(viewsets.ModelViewSet):
                              'off_event': list(off_event),
                              'off_subscribe': off_subscribe}, status=200)
 
+
+    response_schema_dict2 = {
+        "200": openapi.Response(
+            description="해당 카테고리 + 브랜드 필터링을 거친 모든 이벤트 목록과 좋아요 정보를 제공하는 API",
+            examples={
+                "application/json": {
+                    "event": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "v",
+                            "due": "2021-02-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        },
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event2",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "vv",
+                            "due": "2010-02-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        }
+                    ],
+                    "subscribe": [
+                        "Yes",
+                        "No"
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'brand_id': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER), description='int')
+        }
+    ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def get_main(self, request):
         data = JSONParser().parse(request)
@@ -123,6 +248,41 @@ class EventViewSet(viewsets.ModelViewSet):
         return JsonResponse({'event': list(event),
                              'subscribe': subscribe}, status=200)
 
+    response_schema_dict1 = {
+        "200": openapi.Response(
+            description="특정 이벤트의 상세 정보와 좋아요 정보를 제공하는 API",
+            examples={
+                "application/json": {
+                    "event": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "v",
+                            "due": "2021-02-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        }
+                    ],
+                    "subscribe": [
+                        "Yes"
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'event_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict1)
     @action(detail=False, methods=['post'])
     def get_detail(self, request):
         data = JSONParser().parse(request)
@@ -140,3 +300,18 @@ class EventViewSet(viewsets.ModelViewSet):
         event = events.values()
         return JsonResponse({'event': list(event),
                              'subscribe': subscribe}, status=200)
+
+'''
+    # 알림 디비 자동화 오버라이딩
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        data = JSONParser().parse(request)
+        brand_id = data['brand']
+        subscribe = SubscribeEvent.objects.filter(brand=brand_id)
+        for i in subscribe:
+            Notification.objects.create(user=i.user,brand=brand_id)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+'''
