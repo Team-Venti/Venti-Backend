@@ -1,14 +1,18 @@
 # coding=utf-8
+import datetime
+
 from django.http import JsonResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 
-from .models import SubscribeEvent
+from .models import SubscribeEvent, Event
 from .serializer_subscribeEvent import SubscribeEventSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 # 이벤트 좋아요 버튼, 마이브랜드_이벤트
 
 
@@ -34,12 +38,39 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = SubscribeEventFilter
 
+
+    response_schema_dict2 = {
+        "200": openapi.Response(
+            description="마이 벤티의 모든 좋아요 목록과 진행/마감 정보를 제공하는 API",
+            examples={
+                "application/json": {
+
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def users(self, request):
         data = JSONParser().parse(request)
-        user = data['user']
-        myevent = SubscribeEvent.objects.filter(user=user)
+        user_id = data['user_id']
+        on_event = Event.objects.none()
+        off_event = Event.objects.none()
+        now = datetime.datetime.now()
+        myevent = SubscribeEvent.objects.filter(user=user_id)
         # for i in myevent: i.event의 id를 가진 event의 due, time 비교
-        onevent = myevent.values()
-        return JsonResponse({'onevent': list(onevent),
-                             'offevent': list(onevent)}, status=200)
+        for i in myevent:
+            on = Event.objects.filter(id=i.event.id, due__gt=now)
+            off = Event.objects.filter(id=i.event.id, due__lte=now)
+            on_event = on_event.union(on)
+            off_event = off_event.union(off)
+
+        onevent = on_event.values()
+        offevent = off_event.values()
+        return JsonResponse({'on_event': list(onevent),
+                             'off_event': list(offevent)}, status=200)
