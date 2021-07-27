@@ -178,6 +178,11 @@ SWAGGER_SETTINGS = {
     },
 }
 
+# DB필드 : 'media/ upload_to= ' 문자열 저장
+MEDIA_URL = '/media/'
+# 저장경로 : media/ upload_to= 경로에 저장
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
