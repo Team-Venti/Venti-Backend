@@ -25,7 +25,8 @@ class Category(DateInfo):
 
 class Brand(DateInfo):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="brands")
-    image = models.ImageField(null=True, upload_to="brand_logo")  # imagefield setting.py 추가 설정 필요
+    image = models.ImageField(null=True, upload_to="brand_logo")
+    banner_image = models.ImageField(null=True, upload_to="brand_banner")
     name = models.CharField(max_length=50)
     text = models.TextField(null=True)
 
@@ -38,10 +39,9 @@ class Event(DateInfo):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="events")
     name = models.CharField(max_length=50)
     image = models.ImageField(null=True, upload_to="event_logo")
-    banner_image = models.ImageField(null=True, upload_to="event_banner")
     text = models.TextField(null=True)
     due = models.DateTimeField(null=True)
-    weekly_view = models.IntegerField(null=True)
+    view = models.IntegerField(null=True)
     url = models.URLField(null=True)
 
     def __str__(self):
