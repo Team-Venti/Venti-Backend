@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 
-from .models import SubscribeEvent, Event
+from .models import SubscribeEvent, Event, User, Banner
 from .serializer_subscribeEvent import SubscribeEventSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -38,6 +38,16 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = SubscribeEventFilter
 
+    def create(self, request, *args, **kwargs):
+        data = JSONParser().parse(request)
+        user_id = data['user_id']
+        event_id = data['event_id']
+        event = Event.objects.get(id=event_id)
+        SubscribeEvent.objects.create(user=User.objects.get(id=user_id),
+                                      event=event)
+        banner = Banner.objects.filter(name=event.brand.name)
+        banner.update(count=banner[0].count+1)
+        return JsonResponse({"create": "success"}, status=200)
 
     response_schema_dict2 = {
         "200": openapi.Response(
