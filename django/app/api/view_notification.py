@@ -61,24 +61,38 @@ class NotificationUser(APIView):
 @authentication_classes([])
 def noti(request):
     if request.method == "POST":
-        noti_bg(repeat=10)
-        return JsonResponse({"sucess":"true"}, status=302)
+        noti_bg(repeat=120)
+        return JsonResponse({"success":"true"}, status=302)
     return JsonResponse({}, status=404)
 
-@background(schedule=10)
+@background(schedule=120)
 def noti_bg():
     # 현재 시간 가져오기
     now = datetime.now().strftime('%Y-%m-%d %h:%m:%s')
     # 12시간 전
     now12 = datetime.now() + timedelta(hours=12)
+    now24 = datetime.now() + timedelta(hours=24)
+    now48 = datetime.now() + timedelta(hours=48)
     # 12시간 전 이벤트들
     endevent12 = Event.objects.filter(due__gte=(now12 - timedelta(minutes=1)),due__lte=(now12 + timedelta(minutes=1)))
-    # Category.objects.create(name=str(endevent12.count())+now)
+    endevent24 = Event.objects.filter(due__gte=(now24 - timedelta(minutes=1)), due__lte=(now24 + timedelta(minutes=1)))
+    endevent48 = Event.objects.filter(due__gte=(now48 - timedelta(minutes=1)), due__lte=(now48 + timedelta(minutes=1)))
+
     # 이 이벤트를 좋아하는 유저 찾기
     if endevent12.count() != 0:
         for i in endevent12:
             likeevents = SubscribeEvent.objects.filter(event = i.id)
-            # Category.objects.create(name = i.name)
             for j in likeevents:
-                # Category.objects.create(name=j.user)
-                Notification.objects.create(user=j.user, event= i.id, brand=i.brand, notice_type="end")
+                Notification.objects.create(user=j.user, event= i, brand=i.brand, notice_type="end")
+    # 이 이벤트를 좋아하는 유저 찾기
+    if endevent24.count() != 0:
+        for i in endevent24:
+            likeevents = SubscribeEvent.objects.filter(event = i.id)
+            for j in likeevents:
+                Notification.objects.create(user=j.user, event= i, brand=i.brand, notice_type="end")
+    # 이 이벤트를 좋아하는 유저 찾기
+    if endevent48.count() != 0:
+        for i in endevent48:
+            likeevents = SubscribeEvent.objects.filter(event = i.id)
+            for j in likeevents:
+                Notification.objects.create(user=j.user, event= i, brand=i.brand, notice_type="end")
