@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from .models import Event
+from .models import Event, Brand, Banner
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -11,68 +11,46 @@ response_schema_dict = {
         examples={
             "application/json": {
                 "result": [
-                    {
-                        "id": 1,
-                        "created_date": "2021-07-11",
-                        "update_date": "2021-07-11",
-                        "category_id": 1,
-                        "brand_id": 1,
-                        "name": "vips_Event1",
-                        "image": "",
-                        "banner_image": "",
-                        "text": "v",
-                        "due": "2021-07-21",
-                        "weekly_view": 4,
-                        "url": "www.naver.com"
-                    },
-                    {
-                        "id": 2,
-                        "created_date": "2021-07-11",
-                        "update_date": "2021-07-11",
-                        "category_id": 1,
-                        "brand_id": 1,
-                        "name": "vips_Event2",
-                        "image": "",
-                        "banner_image": "",
-                        "text": "vv",
-                        "due": "2021-07-21",
-                        "weekly_view": 3,
-                        "url": "www.naver.com"
-                    },
-                    {
-                        "id": 3,
-                        "created_date": "2021-07-11",
-                        "update_date": "2021-07-11",
-                        "category_id": 2,
-                        "brand_id": 3,
-                        "name": "star_Event1",
-                        "image": "",
-                        "banner_image": "",
-                        "text": "s1",
-                        "due": "2021-07-21",
-                        "weekly_view": 2,
-                        "url": "www.naver.com"
-                    },
-                    {
-                        "id": 4,
-                        "created_date": "2021-07-11",
-                        "update_date": "2021-07-11",
-                        "category_id": 3,
-                        "brand_id": 4,
-                        "name": "nike_Event1",
-                        "image": "",
-                        "banner_image": "",
-                        "text": "n1",
-                        "due": "2021-07-21",
-                        "weekly_view": 1,
-                        "url": "www.naver.com"
-                    }
+                        {
+                            "id": 3,
+                            "created_date": "2021-07-28",
+                            "update_date": "2021-07-28",
+                            "name": "nike",
+                            "count": 4
+                        },
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-28",
+                            "update_date": "2021-07-28",
+                            "name": "vips",
+                            "count": 1
+                        },
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-28",
+                            "update_date": "2021-07-28",
+                            "name": "김천",
+                            "count": 0
+                        },
+                        {
+                            "id": 4,
+                            "created_date": "2021-07-28",
+                            "update_date": "2021-07-28",
+                            "name": "starbucks",
+                            "count": 0
+                        },
+                        {
+                            "id": 5,
+                            "created_date": "2021-07-28",
+                            "update_date": "2021-07-28",
+                            "name": "momstouch",
+                            "count": 0
+                        }
                 ]
             }
         }
     )
 }
-
 
 
 class Weekly(APIView):
@@ -88,6 +66,6 @@ class Weekly(APIView):
     """
 
     def get(self, request, format=None):
-        hot_event = Event.objects.all().order_by('-weekly_view')
-        result = hot_event.values()
+        hot_brand = Banner.objects.all().order_by('-count')
+        result = hot_brand.values()
         return JsonResponse({'result': list(result)}, status=200)
