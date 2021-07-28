@@ -9,7 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
 
-from .models import Event, Brand, SubscribeEvent, Notification
+from .models import Event, Brand, SubscribeEvent, Notification, SubscribeBrand, User
 from .serializer_event import EventSerializer, EventForYouSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -66,6 +66,7 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = EventFilter
+    # http_method_names = ['get', 'post']
 
     response_schema_dict3 = {
         "200": openapi.Response(
@@ -129,6 +130,7 @@ class EventViewSet(viewsets.ModelViewSet):
             }
         )
     }
+
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
@@ -168,7 +170,6 @@ class EventViewSet(viewsets.ModelViewSet):
                              'on_subscribe': on_subscribe,
                              'off_event': list(off_event),
                              'off_subscribe': off_subscribe}, status=200)
-
 
     response_schema_dict2 = {
         "200": openapi.Response(
@@ -213,12 +214,14 @@ class EventViewSet(viewsets.ModelViewSet):
             }
         )
     }
+
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
             'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
-            'brand_id': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER), description='int')
+            'brand_id': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER),
+                                       description='int')
         }
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
@@ -276,6 +279,7 @@ class EventViewSet(viewsets.ModelViewSet):
             }
         )
     }
+
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
@@ -302,16 +306,18 @@ class EventViewSet(viewsets.ModelViewSet):
                              'subscribe': subscribe}, status=200)
 
 '''
-    # 알림 디비 자동화 오버라이딩
+    # 알림 디비 자동화 오버라이딩 ( postman 으로 안쓰니 폐기 )
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        data = JSONParser().parse(request)
-        brand_id = data['brand']
-        subscribe = SubscribeEvent.objects.filter(brand=brand_id)
+        #data = JSONParser().parse(request)
+        brand_id = request.POST.get('brand', '')
+        name = request.POST.get('name', '')
+        subscribe = SubscribeBrand.objects.filter(brand=brand_id)
+        #event = Event.objects.get(name=name)
         for i in subscribe:
-            Notification.objects.create(user=i.user,brand=brand_id)
+            Notification.objects.create(user=User.objects.get(id=i.user.id))
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 '''
