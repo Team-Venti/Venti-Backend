@@ -62,6 +62,8 @@ INSTALLED_APPS = [
 ]
 SITE_ID = 1
 
+ACCOUNT_ADAPTER = 'venti.adapter.CustomAccountAdapter'
+
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'venti.serializers.CustomRegisterSerializer',
 }
