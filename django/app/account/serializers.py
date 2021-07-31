@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from rest_auth.registration.serializers import RegisterSerializer
 from api.models import User
 from .models import *
+from allauth.account.adapter import get_adapter
 
 # JWT 사용을 위한 설정
 JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
@@ -22,20 +23,20 @@ class UserSerializer(serializers.ModelSerializer):
 User = get_user_model()
 
 # 회원가입
+# 회원가입
 class CustomRegisterSerializer(RegisterSerializer):
-    nickname = serializers.CharField(required=False, max_length=50)
+    nickname = serializers.CharField(required=True, max_length=50)
     gender = serializers.CharField(required=False, max_length=50)
     birth = serializers.DateField(required=False)
 
     def __init__(self,*args,**kwargs):
-        super(CustomRegisterSerializer,self).__init__(*args,**kwargs)
+        super(CustomRegisterSerializer, self).__init__(*args, **kwargs)
 
     def get_cleaned_data(self):
         data_dict = super(CustomRegisterSerializer,self).get_cleaned_data() # username, password, email이 디폴트
         data_dict['nickname'] = self.validated_data.get('nickname', '')
         data_dict['gender'] = self.validated_data.get('gender', '')
         data_dict['birth'] = self.validated_data.get('birth', '')
-
         return data_dict
 
 
