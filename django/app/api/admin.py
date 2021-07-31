@@ -35,3 +35,4 @@ class EventAdmin(admin.ModelAdmin):
                 Notification.objects.create(user=User.objects.get(id=j.user.id), event=Event.objects.get(name=i.name), notice_type="new")
 
     make_notification.short_description = '지정 이벤트의 알림 전송'
+
