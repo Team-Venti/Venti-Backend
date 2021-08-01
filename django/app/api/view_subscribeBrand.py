@@ -1,10 +1,12 @@
 # coding=utf-8
 from django.http import JsonResponse
 from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.views import APIView
 
-from .models import SubscribeBrand
+from .models import SubscribeBrand, Brand, User
 from .serializer_subscribeBrand import SubscribeBrandSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -42,3 +44,14 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
         my = SubscribeBrand.objects.filter(user=user)
         mybrand = my.values()
         return JsonResponse({'mybrand': list(mybrand)}, status=200)
+
+# jwt말고 헤더로 로그인 하는법 필요
+@permission_classes([IsAuthenticated])
+class BrandLike(APIView):
+    def post(self, request, format=None):
+        data = JSONParser().parse(request)
+        user_id = data['user_id']
+        brand_id = data['brand_id']
+        for i in brand_id:
+            SubscribeBrand.objects.create(user=User.objects.get(id=user_id), brand=Brand.objects.get(id=i))
+        return JsonResponse({'status': "브랜드 구독 성공"}, status=200)
