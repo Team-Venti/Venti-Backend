@@ -13,11 +13,12 @@ from . import view_notification
 from .view_brand import BrandViewSet
 from .view_event import EventViewSet
 from .view_subscribeEvent import SubscribeEventViewSet
-from .view_subscribeBrand import SubscribeBrandViewSet
+from .view_subscribeBrand import SubscribeBrandViewSet, BrandLike
 from .views_search import Search
 from .view_eventforyou import EventforyouView
 from .view_weekly import Weekly
 from .view_notification import *
+from .view_guest import BrandMain, BrandDetail, EventMain, EventDetail, EventDeadline, BrandList
 # 추가
 # .view_notification import ~ViewSet
 # 관리자 기능? 관련
@@ -46,4 +47,11 @@ urlpatterns = [
     path('search/', Search.as_view()),
     path('weekly/', Weekly.as_view()),
     path('eventforyou/', EventforyouView.as_view(),name = "eventforyou"),
+    path('guest/brand_list/', BrandList.as_view()),
+    path('guest/brand_main/', BrandMain.as_view()),
+    path('guest/brand_detail/', BrandDetail.as_view()),
+    path('guest/event_main/', EventMain.as_view()),
+    path('guest/event_detail/', EventDetail.as_view()),
+    path('guest/event_deadline/', EventDeadline.as_view()),
+    path('guest/mybrands/', BrandLike.as_view())
 ]
