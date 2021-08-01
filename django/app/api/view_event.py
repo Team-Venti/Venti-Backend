@@ -43,25 +43,16 @@ class EventFilter(FilterSet):
 @permission_classes([IsAuthenticated, ])
 @authentication_classes([JSONWebTokenAuthentication, ])
 class EventViewSet(viewsets.ModelViewSet):
-    """
-        이벤트 목록을 불러오거나 저장/수정/삭제 하는 API
-        ---
-        # 예시
-            - GET /api/events
-            - GET /api/events/?catogory=1
-            - GET /api/events/?brand=[1,3,5]
-            - GET /api/events/{id}
-        # parameter
-            - name : 이벤트 이름
-            - image : 이벤트 대표 이미지
-            - banner_image : '인기 이벤트'에 띄우기 위한 크기가 다른 이미지
-            - text : 이벤트 설명
-            - due : 이벤트 마감 기한
-            - weekly_view : 주간 조회수
-            - url : 기업의 이벤트 페이지로 이동하기 위한 url
-            - category : 이벤트가 속한 카테고리(Foreign Key)
-            - brand : 이벤트가 속한 브랜드(Foreign Key)
-    """
+    '''
+    회원일때 api
+    POST events/main/ - 이벤트 메인
+    POST events/details/ - 이벤트 상세
+    POST events/deadline/ - 브랜드 상세 눌렀을 때 밑에 이벤트들
+    비회원일때 api
+    POST events/guest_main/ - 이벤트 메인
+    POST events/guest_details/ - 이벤트 상세
+    POST events/guest_deadline/ - 브랜드 상세 눌렀을 때 밑에 이벤트들
+    '''
     serializer_class = EventSerializer
     queryset = Event.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -139,7 +130,7 @@ class EventViewSet(viewsets.ModelViewSet):
         }
     ), responses=response_schema_dict3)
     @action(detail=False, methods=['post'])
-    def get_onoff(self, request):
+    def deadline(self, request):
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
         user_id = data['user_id']
@@ -225,7 +216,7 @@ class EventViewSet(viewsets.ModelViewSet):
         }
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
-    def get_main(self, request):
+    def main(self, request):
         data = JSONParser().parse(request)
         category_id = data['category_id']
         user_id = data['user_id']
@@ -288,7 +279,7 @@ class EventViewSet(viewsets.ModelViewSet):
         }
     ), responses=response_schema_dict1)
     @action(detail=False, methods=['post'])
-    def get_detail(self, request):
+    def details(self, request):
         data = JSONParser().parse(request)
         event_id = data['event_id']
         user_id = data['user_id']

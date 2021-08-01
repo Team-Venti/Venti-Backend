@@ -25,15 +25,14 @@ class BrandFilter(FilterSet):
 
 
 class BrandViewSet(viewsets.ModelViewSet):
-    """
-        브랜드 목록을 불러오거나 저장/수정/삭제 하는 API
-        ---
-        # 예시
-            - GET /api/brands/
-            - GET /api/brands/?category=1
-            - GET /api/brands/{id}
-
-    """
+    '''
+    회원일때 api
+    POST brands/main/ - 브랜드 메인
+    POST brands/details/ - 브랜드 상세
+    비회원일때 api
+    POST brands/guset_main - 브랜드 메인
+    POST brands/guest_details/ - 브랜드 상세
+    '''
     serializer_class = BrandSerializer
     queryset = Brand.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -80,7 +79,7 @@ class BrandViewSet(viewsets.ModelViewSet):
         }
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
-    def get_main(self, request):
+    def main(self, request):
         data = JSONParser().parse(request)
         category_id = data['category_id']
         user_id = data['user_id']
@@ -130,7 +129,7 @@ class BrandViewSet(viewsets.ModelViewSet):
         }
     ), responses=response_schema_dict1)
     @action(detail=False, methods=['post'])
-    def get_detail(self, request):
+    def details(self, request):
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
         user_id = data['user_id']
