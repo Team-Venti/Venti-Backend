@@ -41,7 +41,7 @@ router.register(r'mybrands', SubscribeBrandViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('notifications/', Notifications.as_view()),
+    # path('notifications/', Notifications.as_view()),
     path('notifications/users/', NotificationUser.as_view()),
     path('noti/', view_notification.noti),
     path('search/', Search.as_view()),
