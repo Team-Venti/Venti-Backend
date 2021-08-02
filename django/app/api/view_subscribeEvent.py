@@ -49,6 +49,18 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
         banner.update(count=banner[0].count+1)
         return JsonResponse({"create": "success"}, status=200)
 
+    @action(detail=False, methods=['post'])
+    def unlike(self, request):
+        data = JSONParser().parse(request)
+        user_id = data['user_id']
+        event_id = data['event_id']
+        event = Event.objects.get(id=event_id)
+        banner = Banner.objects.filter(name=event.brand.name)
+        banner.update(count=banner[0].count-1)
+        subscribe = SubscribeEvent.objects.filter(user=user_id, event=event_id)
+        subscribe.delete()
+        return JsonResponse({"delete": "success"}, status=200)
+
     response_schema_dict2 = {
         "200": openapi.Response(
             description="마이 벤티의 모든 좋아요 목록과 진행/마감 정보를 제공하는 API",
