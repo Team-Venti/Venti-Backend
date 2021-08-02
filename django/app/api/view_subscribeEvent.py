@@ -26,12 +26,9 @@ class SubscribeEventFilter(FilterSet):
 
 class SubscribeEventViewSet(viewsets.ModelViewSet):
     '''
-        유저의 이벤트 좋아요 목록을 불러오거나 저장/삭제 하는 API
-        ---
-        # 예시
-            - POST /api/myevents/ - 유저의 이벤트 좋아요 생성
-            - POST /api/myevents/users/ - 유저의 마이이벤트 목록
-            - POST /api/myevents/unlike/ - 유저의 이벤트 좋아요 취소
+        POST /api/myevents/ - 유저의 이벤트 좋아요 생성
+        POST /api/myevents/users/ - 유저의 마이이벤트 목록
+        POST /api/myevents/unlike/ - 유저의 이벤트 좋아요 취소
     '''
     serializer_class = SubscribeEventSerializer
     queryset = SubscribeEvent.objects.all()
