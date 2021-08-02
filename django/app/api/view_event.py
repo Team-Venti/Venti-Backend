@@ -284,6 +284,7 @@ class EventViewSet(viewsets.ModelViewSet):
         event_id = data['event_id']
         user_id = data['user_id']
         events = Event.objects.filter(id=event_id)
+        events.update(view=events[0].view+1)
         subscribes = SubscribeEvent.objects.filter(user=user_id)
         subscribe = []
         for i in subscribes:
