@@ -12,7 +12,7 @@ class DateInfo(models.Model):
 
 class User(AbstractUser, DateInfo):
     birth = models.DateField(null=True)
-    gender = models.CharField(max_length=10, null=True)  # male / female
+    gender = models.CharField(max_length=10, blank=True)  # male / female
     nickname = models.CharField(max_length=20, unique=True)
 
 

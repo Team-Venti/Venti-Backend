@@ -22,8 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
 # # 기본 유저 모델 불러오기
 User = get_user_model()
 
-# 회원가입
-# 회원가입
 class CustomRegisterSerializer(RegisterSerializer):
     nickname = serializers.CharField(required=True, max_length=50)
     gender = serializers.CharField(required=False, max_length=50)
@@ -31,13 +29,18 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def __init__(self,*args,**kwargs):
         super(CustomRegisterSerializer, self).__init__(*args, **kwargs)
+        self.fields['gender'].required = False
+        self.fields['birth'].required = False
 
     def get_cleaned_data(self):
         data_dict = super(CustomRegisterSerializer,self).get_cleaned_data() # username, password, email이 디폴트
         data_dict['nickname'] = self.validated_data.get('nickname', '')
         data_dict['gender'] = self.validated_data.get('gender', '')
         data_dict['birth'] = self.validated_data.get('birth', '')
+        if data_dict['birth'] == '':
+            data_dict['birth'] = None
         return data_dict
+
 
 
 
