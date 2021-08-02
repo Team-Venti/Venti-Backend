@@ -41,7 +41,7 @@ class Event(DateInfo):
     image = models.ImageField(null=True, upload_to="event_logo")
     text = models.TextField(null=True)
     due = models.DateTimeField(null=True)
-    view = models.IntegerField(null=True)
+    view = models.IntegerField(null=True, default=0)
     url = models.URLField(null=True)
 
     def __str__(self):
