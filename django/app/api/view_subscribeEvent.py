@@ -25,19 +25,37 @@ class SubscribeEventFilter(FilterSet):
 
 
 class SubscribeEventViewSet(viewsets.ModelViewSet):
-    """
+    '''
         유저의 이벤트 좋아요 목록을 불러오거나 저장/삭제 하는 API
         ---
         # 예시
-            - POST /api/myevents/
-            - POST /api/myevents/users/
-            - DELETE /api/myevents/{id}
-    """
+            - POST /api/myevents/ - 유저의 이벤트 좋아요 생성
+            - POST /api/myevents/users/ - 유저의 마이이벤트 목록
+            - POST /api/myevents/unlike/ - 유저의 이벤트 좋아요 취소
+    '''
     serializer_class = SubscribeEventSerializer
     queryset = SubscribeEvent.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = SubscribeEventFilter
 
+    response_schema_dict3 = {
+        "200": openapi.Response(
+            description="유저의 이벤트 좋아요 생성하는 API",
+            examples={
+                "application/json": {
+                    "message": "이벤트 좋아요 성공"
+                }
+            }
+        )
+    }
+
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'event_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict3)
     def create(self, request, *args, **kwargs):
         data = JSONParser().parse(request)
         user_id = data['user_id']
@@ -47,8 +65,26 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
                                       event=event)
         banner = Banner.objects.filter(name=event.brand.name)
         banner.update(count=banner[0].count+1)
-        return JsonResponse({"create": "success"}, status=200)
+        return JsonResponse({"message": "이벤트 좋아요 성공"}, status=200)
 
+
+    response_schema_dict2 = {
+        "200": openapi.Response(
+            description="유저의 이벤트 좋아요를 취소하는 API",
+            examples={
+                "application/json": {
+                    "message": "이벤트 좋아요 취소"
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'event_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def unlike(self, request):
         data = JSONParser().parse(request)
@@ -59,7 +95,7 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
         banner.update(count=banner[0].count-1)
         subscribe = SubscribeEvent.objects.filter(user=user_id, event=event_id)
         subscribe.delete()
-        return JsonResponse({"delete": "success"}, status=200)
+        return JsonResponse({"message": "이벤트 좋아요 취소"}, status=200)
 
     response_schema_dict2 = {
         "200": openapi.Response(
