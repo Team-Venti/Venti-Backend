@@ -1,5 +1,7 @@
 # coding=utf-8
 from django.http import JsonResponse
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from .models import Event, Brand
 from drf_yasg.utils import swagger_auto_schema
@@ -56,19 +58,12 @@ response_schema_dict = {
     )
 }
 
-
+@permission_classes([AllowAny])
 class Search(APIView):
-    """
-        검색한 브랜드/이벤트 목록을 불러오는 API
-        ---
-        # 예시
-            - GET /api/search/?search=vips
-        # parameter
-            - search (string, query)
-        # Responses
-            - search_event: [검색한 이벤트 목록]
-            - search_brand: [검색한 브랜드 목록]
-    """
+    '''
+        검색
+        GET /api/search/?search=vips - 검색
+    '''
     def get(self, request):
         name = request.GET['search']
         event = Event.objects.filter(name__contains=name)

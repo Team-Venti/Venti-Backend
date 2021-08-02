@@ -1,5 +1,7 @@
 # coding=utf-8
 from django.http import JsonResponse
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from .models import Event, Brand, Banner
 from drf_yasg.utils import swagger_auto_schema
@@ -53,17 +55,11 @@ response_schema_dict = {
 }
 
 
+@permission_classes([AllowAny])
 class Weekly(APIView):
-    """
-        인기 이벤트를 불러오거나 저장/수정/삭제 하는 API
-        ---
-        # 예시
-            - GET /api/weekly/
-        # parameters
-            - No parameters
-        # Responses
-            - result : [인기 이벤트 목록]
-    """
+    '''
+        GET api/weekly/ - 메인페이지의 인기 배너
+    '''
 
     def get(self, request, format=None):
         hot_brand = Banner.objects.all().order_by('-count')
