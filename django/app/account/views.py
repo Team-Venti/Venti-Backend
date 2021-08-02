@@ -90,6 +90,20 @@ unsubscribe_response_schema_dict= {
     )
 }
 
+user_schema_dict = {
+    "200": openapi.Response(
+        description="유저 정보 찾기 성공",
+        examples={
+            "application/json": {
+                "username": "te123",
+                "nickname": "ddde4",
+                "email": "ted@naver.com",
+                "gender": "",
+                "birth": "null",
+            }
+        }
+    )
+}
 # 회원가입
 @permission_classes([AllowAny])
 class Registration(generics.GenericAPIView):
@@ -282,4 +296,31 @@ class Unsubscribe(generics.GenericAPIView):
             )
 
 
+class UserDetail(generics.GenericAPIView):
+    """
+        회원 정보 제공
+        ---
+        # URL
+            - POST /accounts/user/
+        # header
+            - Authorization : JWT ey93... [jwt token]
+     """
 
+    serializer_class = UpdateSerializer
+    @swagger_auto_schema(responses=user_schema_dict)
+    def get(self, request, *args, **kwargs):
+        # serializer = self.get_serializer(data=request.data)
+        user = request.user
+        return Response(
+            {
+                # get_serializer_context: serializer에 포함되어야 할 어떠한 정보의 context를 딕셔너리 형태로 리턴
+                # 디폴트 정보 context는 request, view, format
+                "username": user.username,
+                "nickname": user.nickname,
+                "email": user.email,
+                "gender": user.gender,
+                "birth" : user.birth,
+
+            },
+            status=status.HTTP_200_OK,
+        )
