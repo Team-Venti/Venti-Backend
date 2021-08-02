@@ -45,13 +45,13 @@ class EventFilter(FilterSet):
 class EventViewSet(viewsets.ModelViewSet):
     '''
     회원일때 api
-    POST events/main/ - 이벤트 메인
-    POST events/details/ - 이벤트 상세
-    POST events/deadline/ - 브랜드 상세 눌렀을 때 밑에 이벤트들
+    POST api/events/main/ - 이벤트 메인
+    POST api/events/details/ - 이벤트 상세
+    POST api/events/deadline/ - 브랜드 상세 눌렀을 때 밑에 이벤트들
     비회원일때 api
-    POST events/guest_main/ - 이벤트 메인
-    POST events/guest_details/ - 이벤트 상세
-    POST events/guest_deadline/ - 브랜드 상세 눌렀을 때 밑에 이벤트들
+    POST api/guest/event_main/ - 이벤트 메인
+    POST api/guest/event_detail/ - 이벤트 상세
+    POST api/guest/event_deadline/ - 브랜드 상세 눌렀을 때 밑에 이벤트들
     '''
     serializer_class = EventSerializer
     queryset = Event.objects.all()

@@ -29,14 +29,6 @@ from rest_framework import permissions
 # ViewSet으로 class
 @permission_classes([IsAdminUser])
 class UserViewSet(viewsets.ModelViewSet):
-    """
-        유저 목록을 불러오거나 저장/수정/삭제 하는 API
-        ---
-        # 예시
-            - GET /api/user/
-            - POST /api/user/
-            - DELETE /api/user/{id}
-    """
     serializer_class = UserSerializer
     queryset = User.objects.all()
     # filter_backends = [DjangoFilterBackend]

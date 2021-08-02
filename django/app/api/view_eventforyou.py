@@ -79,15 +79,12 @@ response_schema_dict = {
 @permission_classes([])
 @authentication_classes([JSONWebTokenAuthentication,])
 class EventforyouView(APIView):
-    """
-        메인페이지의 EventForYou 이벤트 목록을 불러오는 API
-        ---
-        # 예시
-            - POST /api/eventforyou/
-        # parameter
-            - {user : 1} : user 의 id 를 JSON형식으로 전달
-
-     """
+    '''
+        회원일때 api
+        POST /api/eventforyou/ - 메인페이지의 eventforyou
+        비회원일때 api
+        POST /api/guest/brand_main/ - 메인페이지의 eventforyou
+    '''
     model = Event, SubscribeBrand
     # post : post 로 날라온 유저의 eventforyou 찾아주기
 

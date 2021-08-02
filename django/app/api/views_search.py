@@ -7,63 +7,52 @@ from .models import Event, Brand
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
+
 response_schema_dict = {
     "200": openapi.Response(
         description="검색 결과를 보여준다.",
         examples={
             "application/json": {
-                    "search_event": [
-                        {
-                            "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "v",
-                            "due": "2021-07-21",
-                            "weekly_view": 4,
-                            "url": "www.naver.com"
-                        },
-                        {
-                            "id": 2,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event2",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "vv",
-                            "due": "2021-07-21",
-                            "weekly_view": 3,
-                            "url": "www.naver.com"
-                        }
-                    ],
-                    "search_brand": [
-                        {
-                            "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "category_id": 1,
-                            "image": "",
-                            "name": "vips",
-                            "text": "no1. stake house"
-                        }
-                    ]
+                "events": [
+                    {
+                        "id": 1,
+                        "created_date": "2021-07-11",
+                        "update_date": "2021-07-21",
+                        "category_id": 1,
+                        "brand_id": 1,
+                        "name": "vips_Event1",
+                        "image": "",
+                        "text": "v",
+                        "due": "2021-02-12T00:00:00",
+                        "view": 'null',
+                        "url": 'null'
+                    },
+                    {
+                        "id": 2,
+                        "created_date": "2021-07-11",
+                        "update_date": "2021-07-21",
+                        "category_id": 1,
+                        "brand_id": 1,
+                        "name": "vips_Event2",
+                        "image": "",
+                        "text": "vv",
+                        "due": "2010-02-12T00:00:00",
+                        "view": 'null',
+                        "url": 'null'
+                    }
+                ]
             }
         }
     )
 }
-
 @permission_classes([AllowAny])
 class Search(APIView):
     '''
         검색
         GET /api/search/?search=vips - 검색
     '''
+
+    @swagger_auto_schema(responses=response_schema_dict)
     def get(self, request):
         name = request.GET['search']
         event = Event.objects.filter(name__contains=name)

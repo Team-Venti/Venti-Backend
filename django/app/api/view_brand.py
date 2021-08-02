@@ -27,11 +27,11 @@ class BrandFilter(FilterSet):
 class BrandViewSet(viewsets.ModelViewSet):
     '''
     회원일때 api
-    POST brands/main/ - 브랜드 메인
-    POST brands/details/ - 브랜드 상세
+    POST api/brands/main/ - 브랜드 메인
+    POST api/brands/details/ - 브랜드 상세
     비회원일때 api
-    POST brands/guset_main - 브랜드 메인
-    POST brands/guest_details/ - 브랜드 상세
+    POST api/guest/brand_main - 브랜드 메인
+    POST api/guest/brand_detail/ - 브랜드 상세
     '''
     serializer_class = BrandSerializer
     queryset = Brand.objects.all()
