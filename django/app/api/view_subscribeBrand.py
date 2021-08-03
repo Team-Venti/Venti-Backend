@@ -85,6 +85,40 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
         mybrand = brands.values()
         return JsonResponse({'mybrand': list(mybrand)}, status=200)
 
+    response_schema_dict1 = {
+        "200": openapi.Response(
+            description="유저의 마이브랜드 구독을 취소하는 API",
+            examples={
+                "application/json": {
+                    "message": "브랜드 구독 취소"
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'brand_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict1)
+    @action(detail=False, methods=['post'])
+    def unlike(self, request):
+        """
+            유저 브랜드 구독 취소
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/mybrands/unlike/
+
+        """
+        data = JSONParser().parse(request)
+        user_id = data['user_id']
+        brand_id = data['brand_id']
+        subscribe = SubscribeBrand.objects.filter(user=user_id, brand=brand_id)
+        subscribe.delete()
+        return JsonResponse({"message": "브랜드 구독 취소"}, status=200)
 
 @permission_classes([IsAuthenticated])
 class BrandLike(APIView):
