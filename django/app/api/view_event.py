@@ -125,7 +125,6 @@ class EventViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'brand_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
         }
     ), responses=response_schema_dict3)
@@ -142,7 +141,7 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
-        user_id = data['user_id']
+        user_id = request.user.id
         subscribe = SubscribeEvent.objects.filter(user=user_id)
         now = datetime.datetime.now()
         # 하트순 정렬 하려면 _order_by로 못하고 하트인거랑 아닌거 나눠서 해야할듯
@@ -218,7 +217,6 @@ class EventViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'brand_id': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER),
                                        description='int')
@@ -237,7 +235,7 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         data = JSONParser().parse(request)
         category_id = data['category_id']
-        user_id = data['user_id']
+        user_id = request.user.id
         brand_id = data['brand_id']
         events = Event.objects.none()
         if len(brand_id) == 0:
@@ -292,7 +290,6 @@ class EventViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'event_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
         }
     ), responses=response_schema_dict1)
@@ -309,7 +306,7 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         data = JSONParser().parse(request)
         event_id = data['event_id']
-        user_id = data['user_id']
+        user_id = request.user.id
         events = Event.objects.filter(id=event_id)
         events.update(view=events[0].view+1)
         subscribes = SubscribeEvent.objects.filter(user=user_id)
@@ -323,6 +320,11 @@ class EventViewSet(viewsets.ModelViewSet):
         event = events.values()
         return JsonResponse({'event': list(event),
                              'subscribe': subscribe}, status=200)
+
+    @action(detail=False, methods=['post'])
+    def test(self, request):
+        test = ''+str(request.user.id)
+        return JsonResponse({'result': test}, status=200)
 
 '''
     # 알림 디비 자동화 오버라이딩 ( postman 으로 안쓰니 폐기 )

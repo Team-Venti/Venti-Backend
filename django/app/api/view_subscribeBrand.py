@@ -15,25 +15,25 @@ from drf_yasg import openapi
 
 # 브랜드 좋아요 버튼, 마이브랜드_브랜드
 
-
+'''
 class SubscribeBrandFilter(FilterSet):
     user = filters.NumberFilter(field_name="user")
 
     class Meta:
         model = SubscribeBrand
         fields = ['user']
-
+'''
 
 class SubscribeBrandViewSet(viewsets.ModelViewSet):
     '''
         POST /api/mybrands/ - 유저의 브랜드 구독 생성 ( { "user": , "brand": } )
-        POST /api/mybrands/users/ - 유저의 마이브랜드 목록을 불러오는 API
+        GET /api/mybrands/users/ - 유저의 마이브랜드 목록을 불러오는 API
         POST /api/guest/mybrand/ - 회원가입 할때 유저의 브랜드 구독 생성
     '''
     serializer_class = SubscribeBrandSerializer
     queryset = SubscribeBrand.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = SubscribeBrandFilter
+    # filterset_class = SubscribeBrandFilter
 
     response_schema_dict2 = {
         "200": openapi.Response(
@@ -67,13 +67,8 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
         )
     }
 
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
-        }
-    ), responses=response_schema_dict2)
-    @action(detail=False, methods=['post'])
+    @swagger_auto_schema(responses=response_schema_dict2)
+    @action(detail=False, methods=['get'])
     def users(self, request):
         """
             유저의 마이브랜드 목록을 불러오는 API
@@ -81,11 +76,10 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
             # header
                 - Authorization : jwt ey93..... [jwt token]
             # URL
-                - POST /api/mybrands/users/
+                - GET /api/mybrands/users/
 
         """
-        data = JSONParser().parse(request)
-        user = data['user_id']
+        user = request.user.id
         my = SubscribeBrand.objects.filter(user=user).order_by('brand__category', 'brand__name')
         brands = Brand.objects.none()
         for i in my:
@@ -145,7 +139,6 @@ class BrandLike(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'brand_id': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER),
                                        description='int')
         }
@@ -161,7 +154,7 @@ class BrandLike(APIView):
 
         """
         data = JSONParser().parse(request)
-        user_id = data['user_id']
+        user_id = request.user.id
         brand_id = data['brand_id']
         for i in brand_id:
             SubscribeBrand.objects.create(user=User.objects.get(id=user_id), brand=Brand.objects.get(id=i))

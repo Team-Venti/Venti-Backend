@@ -13,27 +13,29 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+
 # 이벤트 좋아요 버튼, 마이브랜드_이벤트
 
-
+'''
 class SubscribeEventFilter(FilterSet):
     user = filters.NumberFilter(field_name="user")
 
     class Meta:
         model = SubscribeEvent
         fields = ['user']
-
+'''
 
 class SubscribeEventViewSet(viewsets.ModelViewSet):
     '''
         POST /api/myevents/ - 유저의 이벤트 좋아요 생성
-        POST /api/myevents/users/ - 유저의 마이이벤트 목록
+        GET /api/myevents/users/ - 유저의 마이이벤트 목록
         POST /api/myevents/unlike/ - 유저의 이벤트 좋아요 취소
     '''
     serializer_class = SubscribeEventSerializer
     queryset = SubscribeEvent.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = SubscribeEventFilter
+    # filterset_class = SubscribeEventFilter
 
     response_schema_dict3 = {
         "200": openapi.Response(
@@ -49,7 +51,6 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'event_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
         }
     ), responses=response_schema_dict3)
@@ -64,15 +65,14 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
 
         """
         data = JSONParser().parse(request)
-        user_id = data['user_id']
+        user_id = request.user.id
         event_id = data['event_id']
         event = Event.objects.get(id=event_id)
         SubscribeEvent.objects.create(user=User.objects.get(id=user_id),
                                       event=event)
         banner = Banner.objects.filter(name=event.brand.name)
-        banner.update(count=banner[0].count+1)
+        banner.update(count=banner[0].count + 1)
         return JsonResponse({"message": "이벤트 좋아요 성공"}, status=200)
-
 
     response_schema_dict2 = {
         "200": openapi.Response(
@@ -84,10 +84,10 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
             }
         )
     }
+
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'event_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
         }
     ), responses=response_schema_dict2)
@@ -103,11 +103,11 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
 
         """
         data = JSONParser().parse(request)
-        user_id = data['user_id']
+        user_id = request.user.id
         event_id = data['event_id']
         event = Event.objects.get(id=event_id)
         banner = Banner.objects.filter(name=event.brand.name)
-        banner.update(count=banner[0].count-1)
+        banner.update(count=banner[0].count - 1)
         subscribe = SubscribeEvent.objects.filter(user=user_id, event=event_id)
         subscribe.delete()
         return JsonResponse({"message": "이벤트 좋아요 취소"}, status=200)
@@ -167,13 +167,9 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
             }
         )
     }
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
-        }
-    ), responses=response_schema_dict2)
-    @action(detail=False, methods=['post'])
+
+    @swagger_auto_schema(responses=response_schema_dict2)
+    @action(detail=False, methods=['get'])
     def users(self, request):
         """
             유저의 마이이벤트 목록을 불러오는 API
@@ -181,11 +177,10 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
             # header
                 - Authorization : jwt ey93..... [jwt token]
             # URL
-                - POST /api/myevents/users/
+                - GET /api/myevents/users/
 
         """
-        data = JSONParser().parse(request)
-        user_id = data['user_id']
+        user_id = request.user.id
         on_event = Event.objects.none()
         off_event = Event.objects.none()
         now = datetime.datetime.now()

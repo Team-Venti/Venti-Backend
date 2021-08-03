@@ -86,27 +86,21 @@ response_schema_dict2 = {
 
 class NotificationUser(APIView):
     '''
-        POST /api/notifications/users/ - 특정 유저의 알림을 불러옴
+        GET /api/notifications/users/ - 특정 유저의 알림을 불러옴
     '''
 
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
-        }
-    ), responses=response_schema_dict2)
-    def post(self, request, format=None):
+    @swagger_auto_schema(responses=response_schema_dict2)
+    def get(self, request, format=None):
         """
             유저의 알림 목록을 불러오는 API
 
             # header
                 - Authorization : jwt ey93..... [jwt token]
             # URL
-                - POST /api/notifications/users/
+                - GET /api/notifications/users/
 
         """
-        data = JSONParser().parse(request)
-        user = data['user_id']
+        user = request.user.id
         noti = Notification.objects.filter(user=user).order_by('-id')[:30]  # 30개까지 최신순 정렬
         result = noti.values()
         return JsonResponse({'result': list(result)}, status=200)

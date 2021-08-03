@@ -74,7 +74,6 @@ class BrandViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
         }
     ), responses=response_schema_dict2)
@@ -91,7 +90,7 @@ class BrandViewSet(viewsets.ModelViewSet):
         """
         data = JSONParser().parse(request)
         category_id = data['category_id']
-        user_id = data['user_id']
+        user_id = request.user.id
         brands = Brand.objects.filter(category=category_id).order_by('name')
         subscribes = SubscribeBrand.objects.filter(user=user_id)
         subscribe = []
@@ -133,7 +132,6 @@ class BrandViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'brand_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
         }
     ), responses=response_schema_dict1)
@@ -150,7 +148,7 @@ class BrandViewSet(viewsets.ModelViewSet):
         """
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
-        user_id = data['user_id']
+        user_id = request.user.id
         brands = Brand.objects.filter(id=brand_id)
         subscribes = SubscribeBrand.objects.filter(user=user_id)
         subscribe = []
