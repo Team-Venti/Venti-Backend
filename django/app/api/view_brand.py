@@ -83,7 +83,7 @@ class BrandViewSet(viewsets.ModelViewSet):
         data = JSONParser().parse(request)
         category_id = data['category_id']
         user_id = data['user_id']
-        brands = Brand.objects.filter(category=category_id)
+        brands = Brand.objects.filter(category=category_id).order_by('name')
         subscribes = SubscribeBrand.objects.filter(user=user_id)
         subscribe = []
         for i in brands:

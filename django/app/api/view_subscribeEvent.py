@@ -117,20 +117,6 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
                     ],
                     "off_event": [
                         {
-                            "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "v",
-                            "due": "2021-02-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
-                        },
-                        {
                             "id": 3,
                             "created_date": "2021-07-11",
                             "update_date": "2021-07-21",
@@ -141,6 +127,20 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
                             "banner_image": "",
                             "text": "s1",
                             "due": "2019-02-12T00:00:00",
+                            "weekly_view": 'null',
+                            "url": 'null'
+                        },
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "banner_image": "",
+                            "text": "v",
+                            "due": "2021-02-12T00:00:00",
                             "weekly_view": 'null',
                             "url": 'null'
                         }
@@ -162,7 +162,7 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
         on_event = Event.objects.none()
         off_event = Event.objects.none()
         now = datetime.datetime.now()
-        myevent = SubscribeEvent.objects.filter(user=user_id)
+        myevent = SubscribeEvent.objects.filter(user=user_id).order_by('-event__id')
         # for i in myevent: i.event의 id를 가진 event의 due, time 비교
         for i in myevent:
             on = Event.objects.filter(id=i.event.id, due__gt=now)

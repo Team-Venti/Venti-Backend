@@ -137,8 +137,8 @@ class EventViewSet(viewsets.ModelViewSet):
         subscribe = SubscribeEvent.objects.filter(user=user_id)
         now = datetime.datetime.now()
         # 하트순 정렬 하려면 _order_by로 못하고 하트인거랑 아닌거 나눠서 해야할듯
-        off = Event.objects.filter(brand=brand_id, due__lte=now)
-        on = Event.objects.filter(brand=brand_id, due__gt=now)
+        off = Event.objects.filter(brand=brand_id, due__lte=now).order_by('-id')
+        on = Event.objects.filter(brand=brand_id, due__gt=now).order_by('-id')
         on_subscribe = []
         off_subscribe = []
         for i in on:
@@ -223,10 +223,10 @@ class EventViewSet(viewsets.ModelViewSet):
         brand_id = data['brand_id']
         events = Event.objects.none()
         if len(brand_id) == 0:
-            events = Event.objects.filter(category=category_id)
+            events = Event.objects.filter(category=category_id).order_by('-id')
         else:
             for i in brand_id:
-                event = Event.objects.filter(brand=i, category=category_id)
+                event = Event.objects.filter(brand=i, category=category_id).order_by('-id')
                 events = events.union(event)
 
         subscribes = SubscribeEvent.objects.filter(user=user_id)

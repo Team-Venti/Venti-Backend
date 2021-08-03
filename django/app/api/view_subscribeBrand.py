@@ -44,16 +44,22 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
                         {
                             "id": 1,
                             "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "user_id": 2,
-                            "brand_id": 1
+                            "update_date": "2021-07-28",
+                            "category_id": 1,
+                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
+                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
+                            "name": "vips",
+                            "text": "no1. stake house"
                         },
                         {
-                            "id": 2,
+                            "id": 3,
                             "created_date": "2021-07-11",
                             "update_date": "2021-07-11",
-                            "user_id": 2,
-                            "brand_id": 3
+                            "category_id": 2,
+                            "image": "",
+                            "banner_image": 'null',
+                            "name": "starbucks",
+                            "text": "no1. cooffee"
                         }
                     ]
                 }
@@ -71,8 +77,12 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
     def users(self, request):
         data = JSONParser().parse(request)
         user = data['user_id']
-        my = SubscribeBrand.objects.filter(user=user)
-        mybrand = my.values()
+        my = SubscribeBrand.objects.filter(user=user).order_by('brand__category', 'brand__name')
+        brands = Brand.objects.none()
+        for i in my:
+            brand = Brand.objects.filter(id=i.brand.id)
+            brands = brands.union(brand)
+        mybrand = brands.values()
         return JsonResponse({'mybrand': list(mybrand)}, status=200)
 
 
@@ -80,7 +90,7 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
 class BrandLike(APIView):
     response_schema_dict3 = {
         "200": openapi.Response(
-            description="유저의 마이브랜드 목록을 불러오는 API",
+            description="회원가입 선호브랜드때 브랜드 구독하는 API",
             examples={
                 "application/json": {
                     "message": "브랜드 구독 성공"

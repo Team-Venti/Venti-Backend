@@ -42,7 +42,7 @@ class BrandMain(APIView):
     def post(self, request, format=None):
         data = JSONParser().parse(request)
         category_id = data['category_id']
-        brands = Brand.objects.filter(category=category_id)
+        brands = Brand.objects.filter(category=category_id).order_by('name')
         brand = brands.values()
         return JsonResponse({'brand': list(brand)}, status=200)
 
@@ -69,7 +69,7 @@ class BrandDetail(APIView):
 class EventMain(APIView):
     '''
     비회원일때 api
-    POST api/guest/event_main/ - 이벤트 메인
+    POST api/guest/event_main/ - 이벤트 메인, 비회원일때 eventforyou
     - request
     {
         "category_id" : int (category id),
@@ -82,10 +82,10 @@ class EventMain(APIView):
         brand_id = data['brand_id']
         events = Event.objects.none()
         if len(brand_id) == 0:
-            events = Event.objects.filter(category=category_id)
+            events = Event.objects.filter(category=category_id).order_by('-id')
         else:
             for i in brand_id:
-                event = Event.objects.filter(brand=i, category=category_id)
+                event = Event.objects.filter(brand=i, category=category_id).order_by('-id')
                 events = events.union(event)
 
         event = events.values()
@@ -124,8 +124,8 @@ class EventDeadline(APIView):
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
         now = datetime.datetime.now()
-        off = Event.objects.filter(brand=brand_id, due__lte=now)
-        on = Event.objects.filter(brand=brand_id, due__gt=now)
+        off = Event.objects.filter(brand=brand_id, due__lte=now).order_by('-id')
+        on = Event.objects.filter(brand=brand_id, due__gt=now).order_by('-id')
         off_event = off.values()
         on_event = on.values()
         return JsonResponse({'on_event': list(on_event),
