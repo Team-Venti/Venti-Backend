@@ -54,6 +54,13 @@ class Search(APIView):
 
     @swagger_auto_schema(responses=response_schema_dict)
     def get(self, request):
+        """
+            검색 결과
+
+            # URL
+                - GET /api/search/
+
+        """
         name = request.GET['search']
         event = Event.objects.filter(name__contains=name)
         brand = Brand.objects.filter(name__contains=name)

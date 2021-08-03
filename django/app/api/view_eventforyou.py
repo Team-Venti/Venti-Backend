@@ -83,7 +83,7 @@ class EventforyouView(APIView):
         회원일때 api
         POST /api/eventforyou/ - 메인페이지의 eventforyou
         비회원일때 api
-        POST /api/guest/brand_main/ - 메인페이지의 eventforyou
+        POST /api/guest/event_main/ - 메인페이지의 eventforyou
     '''
     model = Event, SubscribeBrand
     # post : post 로 날라온 유저의 eventforyou 찾아주기
@@ -95,6 +95,15 @@ class EventforyouView(APIView):
         }
     ), responses=response_schema_dict)
     def post(self, request):
+        """
+            메인페이지 eventforyou
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/eventforyou/
+
+        """
         events = []
         user = request.POST['user']
         subscribebrands = SubscribeBrand.objects.filter(user=user)

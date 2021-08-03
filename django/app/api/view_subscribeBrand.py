@@ -44,16 +44,22 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
                         {
                             "id": 1,
                             "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "user_id": 2,
-                            "brand_id": 1
+                            "update_date": "2021-07-28",
+                            "category_id": 1,
+                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
+                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
+                            "name": "vips",
+                            "text": "no1. stake house"
                         },
                         {
-                            "id": 2,
+                            "id": 3,
                             "created_date": "2021-07-11",
                             "update_date": "2021-07-11",
-                            "user_id": 2,
-                            "brand_id": 3
+                            "category_id": 2,
+                            "image": "",
+                            "banner_image": 'null',
+                            "name": "starbucks",
+                            "text": "no1. cooffee"
                         }
                     ]
                 }
@@ -69,18 +75,65 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def users(self, request):
+        """
+            유저의 마이브랜드 목록을 불러오는 API
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/mybrands/users/
+
+        """
         data = JSONParser().parse(request)
         user = data['user_id']
-        my = SubscribeBrand.objects.filter(user=user)
-        mybrand = my.values()
+        my = SubscribeBrand.objects.filter(user=user).order_by('brand__category', 'brand__name')
+        brands = Brand.objects.none()
+        for i in my:
+            brand = Brand.objects.filter(id=i.brand.id)
+            brands = brands.union(brand)
+        mybrand = brands.values()
         return JsonResponse({'mybrand': list(mybrand)}, status=200)
 
+    response_schema_dict1 = {
+        "200": openapi.Response(
+            description="유저의 마이브랜드 구독을 취소하는 API",
+            examples={
+                "application/json": {
+                    "message": "브랜드 구독 취소"
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'brand_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict1)
+    @action(detail=False, methods=['post'])
+    def unlike(self, request):
+        """
+            유저 브랜드 구독 취소
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/mybrands/unlike/
+
+        """
+        data = JSONParser().parse(request)
+        user_id = data['user_id']
+        brand_id = data['brand_id']
+        subscribe = SubscribeBrand.objects.filter(user=user_id, brand=brand_id)
+        subscribe.delete()
+        return JsonResponse({"message": "브랜드 구독 취소"}, status=200)
 
 @permission_classes([IsAuthenticated])
 class BrandLike(APIView):
     response_schema_dict3 = {
         "200": openapi.Response(
-            description="유저의 마이브랜드 목록을 불러오는 API",
+            description="회원가입 선호브랜드때 브랜드 구독하는 API",
             examples={
                 "application/json": {
                     "message": "브랜드 구독 성공"
@@ -98,6 +151,15 @@ class BrandLike(APIView):
         }
     ), responses=response_schema_dict3)
     def post(self, request, format=None):
+        """
+            회원가입 선호브랜드 할때 브랜드 구독하는 API
+
+            # header
+                - 이건 토큰 아니고.. 기본 로그인으로 되나? 고민
+            # URL
+                - POST /api/guest/mybrands/
+
+        """
         data = JSONParser().parse(request)
         user_id = data['user_id']
         brand_id = data['brand_id']

@@ -80,10 +80,19 @@ class BrandViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def main(self, request):
+        """
+            카테고리 별 브랜드 목록
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/brands/main/
+
+        """
         data = JSONParser().parse(request)
         category_id = data['category_id']
         user_id = data['user_id']
-        brands = Brand.objects.filter(category=category_id)
+        brands = Brand.objects.filter(category=category_id).order_by('name')
         subscribes = SubscribeBrand.objects.filter(user=user_id)
         subscribe = []
         for i in brands:
@@ -130,6 +139,15 @@ class BrandViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict1)
     @action(detail=False, methods=['post'])
     def details(self, request):
+        """
+            브랜드 상세
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/brands/details/
+
+        """
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
         user_id = data['user_id']

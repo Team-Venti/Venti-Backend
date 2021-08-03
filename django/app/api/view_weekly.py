@@ -62,6 +62,13 @@ class Weekly(APIView):
 
     @swagger_auto_schema(responses=response_schema_dict)
     def get(self, request, format=None):
+        """
+            메인페이지 인기 배너
+
+            # URL
+                - GET /api/weekly/
+
+        """
         hot_brand = Banner.objects.all().order_by('-count')
         result = hot_brand.values()
         return JsonResponse({'result': list(result)}, status=200)
