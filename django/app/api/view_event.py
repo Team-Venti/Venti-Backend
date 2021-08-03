@@ -131,6 +131,15 @@ class EventViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict3)
     @action(detail=False, methods=['post'])
     def deadline(self, request):
+        """
+            브랜드 상세에서 해당 브랜드의 이벤트 목록
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/events/deadline/
+
+        """
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
         user_id = data['user_id']
@@ -217,6 +226,15 @@ class EventViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def main(self, request):
+        """
+            카테고리, 브랜드 별 이벤트 목록
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/events/main/
+
+        """
         data = JSONParser().parse(request)
         category_id = data['category_id']
         user_id = data['user_id']
@@ -280,6 +298,15 @@ class EventViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict1)
     @action(detail=False, methods=['post'])
     def details(self, request):
+        """
+            이벤트 상세
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/events/details/
+
+        """
         data = JSONParser().parse(request)
         event_id = data['event_id']
         user_id = data['user_id']

@@ -75,6 +75,15 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def users(self, request):
+        """
+            유저의 마이브랜드 목록을 불러오는 API
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/mybrands/users/
+
+        """
         data = JSONParser().parse(request)
         user = data['user_id']
         my = SubscribeBrand.objects.filter(user=user).order_by('brand__category', 'brand__name')
@@ -142,6 +151,15 @@ class BrandLike(APIView):
         }
     ), responses=response_schema_dict3)
     def post(self, request, format=None):
+        """
+            회원가입 선호브랜드 할때 브랜드 구독하는 API
+
+            # header
+                - 이건 토큰 아니고.. 기본 로그인으로 되나? 고민
+            # URL
+                - POST /api/guest/mybrands/
+
+        """
         data = JSONParser().parse(request)
         user_id = data['user_id']
         brand_id = data['brand_id']

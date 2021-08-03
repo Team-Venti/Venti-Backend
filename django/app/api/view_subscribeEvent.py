@@ -54,6 +54,15 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
         }
     ), responses=response_schema_dict3)
     def create(self, request, *args, **kwargs):
+        """
+            유저의 이벤트 좋아요
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/myevents/
+
+        """
         data = JSONParser().parse(request)
         user_id = data['user_id']
         event_id = data['event_id']
@@ -84,6 +93,15 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def unlike(self, request):
+        """
+            유저의 이벤트 좋아요 취소
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/myevents/unlike/
+
+        """
         data = JSONParser().parse(request)
         user_id = data['user_id']
         event_id = data['event_id']
@@ -157,6 +175,15 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
     def users(self, request):
+        """
+            유저의 마이이벤트 목록을 불러오는 API
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/myevents/users/
+
+        """
         data = JSONParser().parse(request)
         user_id = data['user_id']
         on_event = Event.objects.none()

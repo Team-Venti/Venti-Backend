@@ -96,6 +96,15 @@ class NotificationUser(APIView):
         }
     ), responses=response_schema_dict2)
     def post(self, request, format=None):
+        """
+            유저의 알림 목록을 불러오는 API
+
+            # header
+                - Authorization : jwt ey93..... [jwt token]
+            # URL
+                - POST /api/notifications/users/
+
+        """
         data = JSONParser().parse(request)
         user = data['user_id']
         noti = Notification.objects.filter(user=user).order_by('-id')[:30]  # 30개까지 최신순 정렬
