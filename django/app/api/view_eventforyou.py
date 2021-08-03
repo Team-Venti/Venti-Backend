@@ -95,15 +95,6 @@ class EventforyouView(APIView):
         }
     ), responses=response_schema_dict)
     def post(self, request):
-        """
-            메인페이지 eventforyou
-
-            # header
-                - Authorization : jwt ey93..... [jwt token]
-            # URL
-                - POST /api/eventforyou/
-
-        """
         events = []
         user = request.POST['user']
         subscribebrands = SubscribeBrand.objects.filter(user=user)

@@ -7,18 +7,81 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 import datetime
 from .models import Event, Brand
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 @permission_classes([AllowAny])
 class BrandList(APIView):
     '''
     비회원일때 api
-    GET api/guest/brand_list - 회원가입시 선호브랜드
+    GET api/guest/brand_list/ - 회원가입시 선호브랜드
     - request
     {
         x
     }
     '''
+    response_schema_dict2 = {
+        "200": openapi.Response(
+            description="회원가입 시 선호브랜드에서 브랜드 목록 불러옴",
+            examples={
+                "application/json": {
+                    "brand": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-28",
+                            "category_id": 1,
+                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
+                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
+                            "name": "vips",
+                            "text": "no1. stake house"
+                        },
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-11",
+                            "category_id": 1,
+                            "image": "",
+                            "banner_image": 'null',
+                            "name": "momstouch",
+                            "text": "no1. hamburger"
+                        },
+                        {
+                            "id": 5,
+                            "created_date": "2021-07-26",
+                            "update_date": "2021-07-26",
+                            "category_id": 1,
+                            "image": "brand_logo/KakaoTalk_20180520_163620948.jpg",
+                            "banner_image": 'null',
+                            "name": "김천",
+                            "text": "ㅁㄴㅇ"
+                        },
+                        {
+                            "id": 3,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-11",
+                            "category_id": 2,
+                            "image": "",
+                            "banner_image": 'null',
+                            "name": "starbucks",
+                            "text": "no1. cooffee"
+                        },
+                        {
+                            "id": 4,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-11",
+                            "category_id": 3,
+                            "image": "",
+                            "banner_image": 'null',
+                            "name": "nike",
+                            "text": "no1. sports"
+                        }
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(responses=response_schema_dict2)
     def get(self, request):
         """
             회원가입 선호브랜드 할때 브랜드 목록 불러옴
@@ -46,6 +109,53 @@ class BrandMain(APIView):
         "category_id" : int (category id)
     }
     '''
+    response_schema_dict3 = {
+        "200": openapi.Response(
+            description="카테고리 별 브랜드 목록",
+            examples={
+                "application/json": {
+                    "brand": [
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-11",
+                            "category_id": 1,
+                            "image": "",
+                            "banner_image": 'null',
+                            "name": "momstouch",
+                            "text": "no1. hamburger"
+                        },
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-28",
+                            "category_id": 1,
+                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
+                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
+                            "name": "vips",
+                            "text": "no1. stake house"
+                        },
+                        {
+                            "id": 5,
+                            "created_date": "2021-07-26",
+                            "update_date": "2021-07-26",
+                            "category_id": 1,
+                            "image": "brand_logo/KakaoTalk_20180520_163620948.jpg",
+                            "banner_image": 'null',
+                            "name": "김천",
+                            "text": "ㅁㄴㅇ"
+                        }
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+        }
+    ), responses=response_schema_dict3)
     def post(self, request, format=None):
         """
             (비회원일때) 카테고리 별 브랜드 목록
@@ -71,6 +181,33 @@ class BrandDetail(APIView):
         "brand_id" : int (brand id)
     }
     '''
+    response_schema_dict1 = {
+        "200": openapi.Response(
+            description="브랜드 상세",
+            examples={
+                "application/json": {
+                    "brand": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-28",
+                            "category_id": 1,
+                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
+                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
+                            "name": "vips",
+                            "text": "no1. stake house"
+                        }
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'brand_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict1)
     def post(self, request, format=None):
         """
             (비회원일때) 브랜드 상세
@@ -97,6 +234,51 @@ class EventMain(APIView):
         "brand_id" : int array (brand id)
     }
     '''
+    response_schema_dict4 = {
+        "200": openapi.Response(
+            description="카테고리, 브랜드 별 이벤트 목록을 불러옴",
+            examples={
+                "application/json": {
+                    "event": [
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event2",
+                            "image": "",
+                            "text": "vv",
+                            "due": "2010-02-12T00:00:00",
+                            "view": 'null',
+                            "url": 'null'
+                        },
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "text": "v",
+                            "due": "2021-02-12T00:00:00",
+                            "view": 'null',
+                            "url": 'null'
+                        }
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'brand_id': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER),
+                                       description='int')
+        }
+    ), responses=response_schema_dict4)
     def post(self, request, format=None):
         """
             (비회원일때) 카테고리, 브랜드 별 이벤트 목록 and (비회원일때) 메인페이지의 eventforyou
@@ -130,6 +312,36 @@ class EventDetail(APIView):
         "event_id" : int (event id)
     }
     '''
+    response_schema_dict5 = {
+        "200": openapi.Response(
+            description="이벤트 상세",
+            examples={
+                "application/json": {
+                    "event": [
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "text": "v",
+                            "due": "2021-02-12T00:00:00",
+                            "view": 'null',
+                            "url": 'null'
+                        }
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'event_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict5)
     def post(self, request, format=None):
         """
             (비회원일때) 이벤트 상세
@@ -155,6 +367,50 @@ class EventDeadline(APIView):
         "brand_id" : int (brand id)
     }
     '''
+    response_schema_dict6 = {
+        "200": openapi.Response(
+            description="브랜드 상세에서 해당 브랜드의 이벤트 목록을 불러옴",
+            examples={
+                "application/json": {
+                    "on_event": [],
+                    "off_event": [
+                        {
+                            "id": 2,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event2",
+                            "image": "",
+                            "text": "vv",
+                            "due": "2010-02-12T00:00:00",
+                            "view": 'null',
+                            "url": 'null'
+                        },
+                        {
+                            "id": 1,
+                            "created_date": "2021-07-11",
+                            "update_date": "2021-07-21",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "vips_Event1",
+                            "image": "",
+                            "text": "v",
+                            "due": "2021-02-12T00:00:00",
+                            "view": 'null',
+                            "url": 'null'
+                        }
+                    ]
+                }
+            }
+        )
+    }
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'brand_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
+        }
+    ), responses=response_schema_dict6)
     def post(self, request, format=None):
         """
             (비회원일때) 브랜드 상세에서 해당 브랜드의 이벤트 목록
