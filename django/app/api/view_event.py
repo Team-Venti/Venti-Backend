@@ -219,28 +219,44 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         data = JSONParser().parse(request)
         category_id = data['category_id']
-        user_id = request.user.id
         brand_id = data['brand_id']
-        events = Event.objects.none()
+        user_id = request.user.id
+        subscribes = SubscribeEvent.objects.filter(user=user_id)
+        now = datetime.datetime.now()
+        event = []
         if len(brand_id) == 0:
-            events = Event.objects.filter(category=category_id).order_by('-id')
+            events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
+            for each_event in events.values():
+                for each_sub in subscribes:
+                    if each_sub.event.id == each_event['id']:
+                        brand = Brand.objects.get(id=each_event['brand_id'])
+                        event.append(each_event)
+                        event[-1]['brand_name'] = brand.name
+                        event[-1]['subs'] = True
+                        break
+                else:
+                    brand = Brand.objects.get(id=each_event['brand_id'])
+                    event.append(each_event)
+                    event[-1]['brand_name'] = brand.name
+                    event[-1]['subs'] = False
         else:
             for i in brand_id:
-                event = Event.objects.filter(brand=i, category=category_id).order_by('-id')
-                events = events.union(event)
+                events = Event.objects.filter(brand=i, category=category_id, due__gt=now).order_by('-id')
+                for each_event in events.values():
+                    for each_sub in subscribes:
+                        if each_sub.event.id == each_event['id']:
+                            brand = Brand.objects.get(id=each_event['brand_id'])
+                            event.append(each_event)
+                            event[-1]['brand_name'] = brand.name
+                            event[-1]['subs'] = True
+                            break
+                    else:
+                        brand = Brand.objects.get(id=each_event['brand_id'])
+                        event.append(each_event)
+                        event[-1]['brand_name'] = brand.name
+                        event[-1]['subs'] = False
 
-        subscribes = SubscribeEvent.objects.filter(user=user_id)
-        subscribe = []
-        for i in events:
-            for j in subscribes:
-                if i.id == j.event.id:
-                    subscribe.append("Yes")
-                    break
-            else:
-                subscribe.append("No")
-        event = events.values()
-        return JsonResponse({'event': list(event),
-                             'subscribe': subscribe}, status=200)
+        return JsonResponse({'event': event}, status=200)
 
     response_schema_dict1 = {
         "200": openapi.Response(
@@ -310,35 +326,18 @@ class EventViewSet(viewsets.ModelViewSet):
     def test(self, request):
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
-        user_id = request.user.id
         on_event = []
         off_event = []
         now = datetime.datetime.now()
-        subscribes = SubscribeEvent.objects.filter(user=user_id)
         events = Event.objects.filter(brand=brand_id)
         for each_event in events.values():
             brand = Brand.objects.get(id=each_event['brand_id'])
-            # brand_name = each_event['brand'].name
-            for each_sub in subscribes:
-                if each_event['id'] == each_sub.event.id:
-                    if each_event['due'] > now:
-                        on_event.append(each_event)
-                        on_event[-1]['subs'] = True
-                        on_event[-1]['brand_name'] = brand.name
-                    else:
-                        off_event.append(each_event)
-                        off_event[-1]['subs'] = True
-                        off_event[-1]['brand_name'] = brand.name
-                    break
+            if each_event['due'] > now:
+                on_event.append(each_event)
+                on_event[-1]['brand_name'] = brand.name
             else:
-                if each_event['due'] > now:
-                    on_event.append(each_event)
-                    on_event[-1]['subs'] = False
-                    on_event[-1]['brand_name'] = brand.name
-                else:
-                    off_event.append(each_event)
-                    off_event[-1]['subs'] = False
-                    off_event[-1]['brand_name'] = brand.name
+                off_event.append(each_event)
+                off_event[-1]['brand_name'] = brand.name
 
         return JsonResponse({"on_event": on_event,
                              "off_event": off_event}, status=200)
