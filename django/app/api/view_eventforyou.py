@@ -41,7 +41,9 @@ response_schema_dict = {
                         "text": "dd",
                         "due": "2021-08-07T10:27:49",
                         "view": 0,
-                        "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461"
+                        "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                        "brand_name": "aa",
+                        "subs": "true"
                     },
                     {
                         "id": 2,
@@ -54,40 +56,10 @@ response_schema_dict = {
                         "text": "dd",
                         "due": "2021-08-07T10:28:05",
                         "view": 0,
-                        "url": "http://event.com"
-                    },
-                    {
-                        "id": 3,
-                        "created_date": "2021-08-04",
-                        "update_date": "2021-08-04",
-                        "category_id": 1,
-                        "brand_id": 2,
-                        "name": "bblike",
-                        "image": "event_logo/스타벅스배너.png",
-                        "text": "ddd",
-                        "due": "2021-08-07T10:28:38",
-                        "view": 0,
-                        "url": "https://www.hollys.co.kr/news/event/view.do?idx=263&pageNo=1&division="
-                    },
-                    {
-                        "id": 4,
-                        "created_date": "2021-08-04",
-                        "update_date": "2021-08-04",
-                        "category_id": 1,
-                        "brand_id": 2,
-                        "name": "bbunlike",
-                        "image": "event_logo/스타벅스배너_wxNVCEc.png",
-                        "text": "ss",
-                        "due": "2021-08-07T10:28:56",
-                        "view": 0,
-                        "url": "http://a.com"
+                        "url": "http://event.com",
+                        "brand_name": "aa",
+                        "subs": "false"
                     }
-                ],
-                "subscribe": [
-                    "Yes",
-                    "No",
-                    "Yes",
-                    "No"
                 ]
             }
         }
@@ -122,17 +94,17 @@ class EventforyouView(APIView):
         for k in subscribeevents.values():
             subevents.append(k['event_id'])
 
-        subs_events = []
         subscribebrands = SubscribeBrand.objects.filter(user=user)
         now = datetime.datetime.now()
 
         for i in subscribebrands :
+            brandname = i.brand.name
             eventforyou = Event.objects.filter(brand=i.brand,category = category_id, due__gt=now)
             for j in eventforyou.values() :
+                j['brand_name'] = brandname
                 events.append(j)
                 if j['id'] in subevents:
-                    subs_events.append("Yes")
+                    j['subs'] = True
                 else:
-                    subs_events.append("No")
-        return JsonResponse({'event' : events,
-                             'subscribe' : subs_events }, status=200)
+                    j['subs'] = False
+        return JsonResponse({'event' : events}, status=200)
