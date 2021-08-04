@@ -361,8 +361,14 @@ class EventDetail(APIView):
         data = JSONParser().parse(request)
         event_id = data['event_id']
         events = Event.objects.filter(id=event_id)
-        event = events.values()
-        return JsonResponse({'event': list(event)}, status=200)
+        events.update(view=events[0].view+1)
+        event = []
+        for each_event in events.values():
+            brand = Brand.objects.get(id=each_event['brand_id'])
+            event.append(each_event)
+            event[-1]['brand_name'] = brand.name
+
+        return JsonResponse({'event': event}, status=200)
 
 
 @permission_classes([AllowAny])
