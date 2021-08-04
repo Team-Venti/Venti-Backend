@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'background_task',
+    'storages'
 ]
 SITE_ID = 1
 
