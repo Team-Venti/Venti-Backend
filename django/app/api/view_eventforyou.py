@@ -5,7 +5,7 @@ import json
 # from rest_framework.decorators import api_view, renderer_classes
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
-from .models import Event, SubscribeBrand
+from .models import Event, SubscribeBrand,SubscribeEvent
 from django.http import JsonResponse, HttpResponse
 from .serializer_subscribeBrand import UseridSerializer
 from rest_framework.parsers import JSONParser
@@ -21,62 +21,80 @@ from drf_yasg.inspectors import SwaggerAutoSchema
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+import datetime
+
 
 response_schema_dict = {
     "200": openapi.Response(
         description="사용자가 좋아요 한 브랜드의 이벤트를 보여준다.",
         examples={
             "application/json": {
-                    "eventforyou": [
-                        {
-                            "id": 4,
-                            "created_date": "2021-07-10",
-                            "update_date": "2021-07-10",
-                            "category_id": 2,
-                            "brand_id": 6,
-                            "name": "투썸케잌신메뉴",
-                            "image": "스크린샷_2021-07-10_오후_9.19.23.png",
-                            "banner_image": "스크린샷_2021-07-09_오후_7.40.17.png",
-                            "text": "투썸케잌신메뉴투썸케잌신메뉴투썸케잌신메뉴",
-                            "due": "2021-07-17",
-                            "weekly_view": 1,
-                            "url": "https://www.nike.com/kr/ko_kr/c/nike-membership"
-                        },
-                        {
-                            "id": 6,
-                            "created_date": "2021-07-10",
-                            "update_date": "2021-07-10",
-                            "category_id": 2,
-                            "brand_id": 6,
-                            "name": "투썸 이제 한국꺼아님",
-                            "image": "스크린샷_2021-07-08_오후_6.28.09.png",
-                            "banner_image": "스크린샷_2021-07-08_오후_6.33.22_NF4N80g.png",
-                            "text": "홍콩껀가?그래",
-                            "due": "2021-07-18",
-                            "weekly_view": 1,
-                            "url": "https://www.nike.com/kr/ko_kr/c/nike-membership"
-                        },
-                        {
-                            "id": 9,
-                            "created_date": "2021-07-10",
-                            "update_date": "2021-07-10",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "나이키온마슈즈~",
-                            "image": "스크린샷_2021-07-10_오후_9.18.56_2uqKi2h.png",
-                            "banner_image": "스크린샷_2021-07-09_오후_7.40.17_ftMHPKi.png",
-                            "text": "멕미 펄펙",
-                            "due": "2021-07-10",
-                            "weekly_view": 1,
-                            "url": "https://www.nike.com/kr/ko_kr/c/nike-membership"
-                        }
-                    ]
+                "event": [
+                    {
+                        "id": 1,
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
+                        "category_id": 1,
+                        "brand_id": 1,
+                        "name": "aalike",
+                        "image": "event_logo/버거킹배너.jpeg",
+                        "text": "dd",
+                        "due": "2021-08-07T10:27:49",
+                        "view": 0,
+                        "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461"
+                    },
+                    {
+                        "id": 2,
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
+                        "category_id": 1,
+                        "brand_id": 1,
+                        "name": "aaunlike",
+                        "image": "event_logo/버거킹.png",
+                        "text": "dd",
+                        "due": "2021-08-07T10:28:05",
+                        "view": 0,
+                        "url": "http://event.com"
+                    },
+                    {
+                        "id": 3,
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
+                        "category_id": 1,
+                        "brand_id": 2,
+                        "name": "bblike",
+                        "image": "event_logo/스타벅스배너.png",
+                        "text": "ddd",
+                        "due": "2021-08-07T10:28:38",
+                        "view": 0,
+                        "url": "https://www.hollys.co.kr/news/event/view.do?idx=263&pageNo=1&division="
+                    },
+                    {
+                        "id": 4,
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
+                        "category_id": 1,
+                        "brand_id": 2,
+                        "name": "bbunlike",
+                        "image": "event_logo/스타벅스배너_wxNVCEc.png",
+                        "text": "ss",
+                        "due": "2021-08-07T10:28:56",
+                        "view": 0,
+                        "url": "http://a.com"
+                    }
+                ],
+                "subscribe": [
+                    "Yes",
+                    "No",
+                    "Yes",
+                    "No"
+                ]
             }
         }
     )
 }
 
-@permission_classes([])
+@permission_classes([IsAuthenticated])
 @authentication_classes([JSONWebTokenAuthentication,])
 class EventforyouView(APIView):
     '''
@@ -85,21 +103,36 @@ class EventforyouView(APIView):
         비회원일때 api
         POST /api/guest/event_main/ - 메인페이지의 eventforyou
     '''
-    model = Event, SubscribeBrand
+    model = Event, SubscribeBrand, SubscribeEvent
     # post : post 로 날라온 유저의 eventforyou 찾아주기
 
     @swagger_auto_schema(request_body= openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'category': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
         }
     ), responses=response_schema_dict)
+
     def post(self, request):
         events = []
-        user = request.POST['user']
+        subevents = []
+        user = request.user.id
+        category_id = request.POST['category']
+        subscribeevents = SubscribeEvent.objects.filter(user=user)
+        for k in subscribeevents.values():
+            subevents.append(k['event_id'])
+
+        subs_events = []
         subscribebrands = SubscribeBrand.objects.filter(user=user)
+        now = datetime.datetime.now()
+
         for i in subscribebrands :
-            eventforyou = Event.objects.filter(brand=i.brand)
+            eventforyou = Event.objects.filter(brand=i.brand,category = category_id, due__gt=now)
             for j in eventforyou.values() :
                 events.append(j)
-        return JsonResponse({'eventforyou' : events}, status=200)
+                if j['id'] in subevents:
+                    subs_events.append("Yes")
+                else:
+                    subs_events.append("No")
+        return JsonResponse({'event' : events,
+                             'subscribe' : subs_events }, status=200)
