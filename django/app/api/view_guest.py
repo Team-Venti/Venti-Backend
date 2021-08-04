@@ -9,6 +9,7 @@ import datetime
 from .models import Event, Brand
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+import datetime
 
 @permission_classes([AllowAny])
 class BrandList(APIView):
@@ -290,16 +291,23 @@ class EventMain(APIView):
         data = JSONParser().parse(request)
         category_id = data['category_id']
         brand_id = data['brand_id']
-        events = Event.objects.none()
+        now = datetime.datetime.now()
+        event = []
         if len(brand_id) == 0:
-            events = Event.objects.filter(category=category_id).order_by('-id')
+            events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
+            for each in events.values():
+                brand = Brand.objects.get(id=each['brand_id'])
+                event.append(each)
+                event[-1]['brand_name'] = brand.name
         else:
             for i in brand_id:
-                event = Event.objects.filter(brand=i, category=category_id).order_by('-id')
-                events = events.union(event)
+                events = Event.objects.filter(brand=i, category=category_id, due__gt=now).order_by('-id')
+                for each in events.values():
+                    brand = Brand.objects.get(id=each['brand_id'])
+                    event.append(each)
+                    event[-1]['brand_name'] = brand.name
 
-        event = events.values()
-        return JsonResponse({'event': list(event)}, status=200)
+        return JsonResponse({'event': event}, status=200)
 
 
 @permission_classes([AllowAny])
