@@ -8,9 +8,9 @@ import datetime
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
-
+import datetime
 from .models import Event, Brand, SubscribeEvent, Notification, SubscribeBrand, User
-from .serializer_event import EventSerializer, EventForYouSerializer
+from .serializer_event import EventSerializer, EventListSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
 # jwt
@@ -66,57 +66,37 @@ class EventViewSet(viewsets.ModelViewSet):
                 "application/json": {
                     "on_event": [
                         {
-                            "id": 3,
+                            "id": 4,
                             "created_date": "2021-07-11",
                             "update_date": "2021-07-21",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event3",
+                            "category_id": 3,
+                            "brand_id": 4,
+                            "name": "nike_Event1",
                             "image": "",
-                            "banner_image": "",
-                            "text": "vvv",
-                            "due": "2021-12-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
-                        }
-                    ],
-                    "on_subscribe": [
-                        "No"
-                    ],
-                    "off_event": [
-                        {
-                            "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "v",
-                            "due": "2021-02-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
+                            "text": "n1",
+                            "due": "2030-02-12T00:00:00",
+                            "view": 'null',
+                            "url": 'null',
+                            "subs": 'false',
+                            "brand_name": "nike"
                         },
                         {
-                            "id": 2,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event2",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "vv",
-                            "due": "2010-02-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
+                            "id": 38,
+                            "created_date": "2021-08-02",
+                            "update_date": "2021-08-02",
+                            "category_id": 3,
+                            "brand_id": 4,
+                            "name": "vips(nike_event)",
+                            "image": "event_logo/KakaoTalk_20180520_163620948_cSBCjiS.jpg",
+                            "text": "hi",
+                            "due": "2021-10-01T00:00:00",
+                            "view": "0000-00-00",
+                            "url": "http://www.naver.com",
+                            "subs": 'true',
+                            "brand_name": "nike"
                         }
                     ],
-                    "off_subscribe": [
-                        "Yes",
-                        "No"
-                    ]
+                    "off_event": []
                 }
             }
         )
@@ -142,33 +122,37 @@ class EventViewSet(viewsets.ModelViewSet):
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
         user_id = request.user.id
-        subscribe = SubscribeEvent.objects.filter(user=user_id)
+        on_event = []
+        off_event = []
         now = datetime.datetime.now()
-        # 하트순 정렬 하려면 _order_by로 못하고 하트인거랑 아닌거 나눠서 해야할듯
-        off = Event.objects.filter(brand=brand_id, due__lte=now).order_by('-id')
-        on = Event.objects.filter(brand=brand_id, due__gt=now).order_by('-id')
-        on_subscribe = []
-        off_subscribe = []
-        for i in on:
-            for j in subscribe:
-                if i.id == j.event.id:
-                    on_subscribe.append("Yes")
+        subscribes = SubscribeEvent.objects.filter(user=user_id)
+        events = Event.objects.filter(brand=brand_id)
+        for each_event in events.values():
+            brand = Brand.objects.get(id=each_event['brand_id'])
+            # brand_name = each_event['brand'].name
+            for each_sub in subscribes:
+                if each_event['id'] == each_sub.event.id:
+                    if each_event['due'] > now:
+                        on_event.append(each_event)
+                        on_event[-1]['subs'] = True
+                        on_event[-1]['brand_name'] = brand.name
+                    else:
+                        off_event.append(each_event)
+                        off_event[-1]['subs'] = True
+                        off_event[-1]['brand_name'] = brand.name
                     break
             else:
-                on_subscribe.append("No")
-        for i in off:
-            for j in subscribe:
-                if i.id == j.event.id:
-                    off_subscribe.append("Yes")
-                    break
-            else:
-                off_subscribe.append("No")
-        off_event = off.values()
-        on_event = on.values()
-        return JsonResponse({'on_event': list(on_event),
-                             'on_subscribe': on_subscribe,
-                             'off_event': list(off_event),
-                             'off_subscribe': off_subscribe}, status=200)
+                if each_event['due'] > now:
+                    on_event.append(each_event)
+                    on_event[-1]['subs'] = False
+                    on_event[-1]['brand_name'] = brand.name
+                else:
+                    off_event.append(each_event)
+                    off_event[-1]['subs'] = False
+                    off_event[-1]['brand_name'] = brand.name
+
+        return JsonResponse({"on_event": on_event,
+                             "off_event": off_event}, status=200)
 
     response_schema_dict2 = {
         "200": openapi.Response(
@@ -321,10 +305,43 @@ class EventViewSet(viewsets.ModelViewSet):
         return JsonResponse({'event': list(event),
                              'subscribe': subscribe}, status=200)
 
+    # 테스트 코드
     @action(detail=False, methods=['post'])
     def test(self, request):
-        test = ''+str(request.user.id)
-        return JsonResponse({'result': test}, status=200)
+        data = JSONParser().parse(request)
+        brand_id = data['brand_id']
+        user_id = request.user.id
+        on_event = []
+        off_event = []
+        now = datetime.datetime.now()
+        subscribes = SubscribeEvent.objects.filter(user=user_id)
+        events = Event.objects.filter(brand=brand_id)
+        for each_event in events.values():
+            brand = Brand.objects.get(id=each_event['brand_id'])
+            # brand_name = each_event['brand'].name
+            for each_sub in subscribes:
+                if each_event['id'] == each_sub.event.id:
+                    if each_event['due'] > now:
+                        on_event.append(each_event)
+                        on_event[-1]['subs'] = True
+                        on_event[-1]['brand_name'] = brand.name
+                    else:
+                        off_event.append(each_event)
+                        off_event[-1]['subs'] = True
+                        off_event[-1]['brand_name'] = brand.name
+                    break
+            else:
+                if each_event['due'] > now:
+                    on_event.append(each_event)
+                    on_event[-1]['subs'] = False
+                    on_event[-1]['brand_name'] = brand.name
+                else:
+                    off_event.append(each_event)
+                    off_event[-1]['subs'] = False
+                    off_event[-1]['brand_name'] = brand.name
+
+        return JsonResponse({"on_event": on_event,
+                             "off_event": off_event}, status=200)
 
 '''
     # 알림 디비 자동화 오버라이딩 ( postman 으로 안쓰니 폐기 )
