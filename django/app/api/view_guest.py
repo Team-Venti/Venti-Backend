@@ -372,35 +372,37 @@ class EventDeadline(APIView):
             description="브랜드 상세에서 해당 브랜드의 이벤트 목록을 불러옴",
             examples={
                 "application/json": {
-                    "on_event": [],
-                    "off_event": [
+                    "on_event": [
                         {
-                            "id": 2,
+                            "id": 4,
                             "created_date": "2021-07-11",
                             "update_date": "2021-07-21",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event2",
+                            "category_id": 3,
+                            "brand_id": 4,
+                            "name": "nike_Event1",
                             "image": "",
-                            "text": "vv",
-                            "due": "2010-02-12T00:00:00",
+                            "text": "n1",
+                            "due": "2030-02-12T00:00:00",
                             "view": 'null',
-                            "url": 'null'
+                            "url": 'null',
+                            "brand_name": "nike"
                         },
                         {
-                            "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "text": "v",
-                            "due": "2021-02-12T00:00:00",
-                            "view": 'null',
-                            "url": 'null'
+                            "id": 38,
+                            "created_date": "2021-08-02",
+                            "update_date": "2021-08-02",
+                            "category_id": 3,
+                            "brand_id": 4,
+                            "name": "vips(nike_event)",
+                            "image": "event_logo/KakaoTalk_20180520_163620948_cSBCjiS.jpg",
+                            "text": "hi",
+                            "due": "2021-10-01T00:00:00",
+                            "view": "0000-00-00",
+                            "url": "http://www.naver.com",
+                            "brand_name": "nike"
                         }
-                    ]
+                    ],
+                    "off_event": []
                 }
             }
         )
@@ -421,10 +423,18 @@ class EventDeadline(APIView):
         """
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
+        on_event = []
+        off_event = []
         now = datetime.datetime.now()
-        off = Event.objects.filter(brand=brand_id, due__lte=now).order_by('-id')
-        on = Event.objects.filter(brand=brand_id, due__gt=now).order_by('-id')
-        off_event = off.values()
-        on_event = on.values()
-        return JsonResponse({'on_event': list(on_event),
-                             'off_event': list(off_event)}, status=200)
+        events = Event.objects.filter(brand=brand_id)
+        for each_event in events.values():
+            brand = Brand.objects.get(id=each_event['brand_id'])
+            if each_event['due'] > now:
+                on_event.append(each_event)
+                on_event[-1]['brand_name'] = brand.name
+            else:
+                off_event.append(each_event)
+                off_event[-1]['brand_name'] = brand.name
+
+        return JsonResponse({"on_event": on_event,
+                             "off_event": off_event}, status=200)
