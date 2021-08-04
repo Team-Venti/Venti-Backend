@@ -217,7 +217,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 - POST /api/events/main/
 
         """
-        data = JSONParser().parse(request)
+        data = JSONParser().parse(request)  # 아 D-1 이거 줘야한다...
         category_id = data['category_id']
         brand_id = data['brand_id']
         user_id = request.user.id
@@ -310,16 +310,22 @@ class EventViewSet(viewsets.ModelViewSet):
         events = Event.objects.filter(id=event_id)
         events.update(view=events[0].view+1)
         subscribes = SubscribeEvent.objects.filter(user=user_id)
-        subscribe = []
-        for i in subscribes:
-            if events[0].id == i.event.id:
-                subscribe.append("Yes")
-                break
-        else:
-            subscribe.append("No")
-        event = events.values()
-        return JsonResponse({'event': list(event),
-                             'subscribe': subscribe}, status=200)
+        event = []
+        for each_event in events.values():
+            for each_sub in subscribes:
+                if each_sub.event.id == each_event['id']:
+                    brand = Brand.objects.get(id=each_event['brand_id'])
+                    event.append(each_event)
+                    event[-1]['brand_name'] = brand.name
+                    event[-1]['subs'] = True
+                    break
+            else:
+                brand = Brand.objects.get(id=each_event['brand_id'])
+                event.append(each_event)
+                event[-1]['brand_name'] = brand.name
+                event[-1]['subs'] = False
+
+        return JsonResponse({'event': event}, status=200)
 
     # 테스트 코드
     @action(detail=False, methods=['post'])
