@@ -43,23 +43,27 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
                     "mybrand": [
                         {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-28",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
-                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
-                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
-                            "name": "vips",
-                            "text": "no1. stake house"
+                            "image": "brand_logo/무신사배너.jpeg",
+                            "banner_image": "brand_banner/무신사페이.jpeg",
+                            "name": "aa",
+                            "text": "ddd",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/무신사배너.jpeg",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/무신사페이.jpeg"
                         },
                         {
-                            "id": 3,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "category_id": 2,
-                            "image": "",
-                            "banner_image": 'null',
-                            "name": "starbucks",
-                            "text": "no1. cooffee"
+                            "id": 2,
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
+                            "category_id": 1,
+                            "image": "brand_logo/버거킹.png",
+                            "banner_image": "brand_banner/버거킹배너.jpeg",
+                            "name": "bb",
+                            "text": "bbb",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/버거킹.png",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/버거킹배너.jpeg"
                         }
                     ]
                 }
@@ -85,8 +89,12 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
         for i in my:
             brand = Brand.objects.filter(id=i.brand.id)
             brands = brands.union(brand)
-        mybrand = brands.values()
-        return JsonResponse({'mybrand': list(mybrand)}, status=200)
+        mybrand  = []
+        for i in brands.values():
+            i['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['image'])
+            i['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['banner_image'])
+            mybrand.append(i)
+        return JsonResponse({'mybrand': mybrand}, status=200)
 
     response_schema_dict1 = {
         "200": openapi.Response(

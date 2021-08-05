@@ -117,52 +117,37 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
             description="마이 벤티의 모든 좋아요 목록과 진행/마감 정보를 제공하는 API",
             examples={
                 "application/json": {
-                    "on_event": [
-                        {
-                            "id": 2,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event2",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "vv",
-                            "due": "2021-12-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
-                        }
-                    ],
-                    "off_event": [
+                     "on_event": [
                         {
                             "id": 3,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 2,
-                            "brand_id": 3,
-                            "name": "star_Event1",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "s1",
-                            "due": "2019-02-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
+                            "category_id": 1,
+                            "brand_id": 2,
+                            "name": "bblike",
+                            "image": "event_logo/스타벅스배너.png",
+                            "text": "ddd",
+                            "due": "2021-08-07T10:28:38",
+                            "view": 0,
+                            "url": "https://www.hollys.co.kr/news/event/view.do?idx=263&pageNo=1&division=",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/스타벅스배너.png"
                         },
                         {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
                             "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "v",
-                            "due": "2021-02-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
+                            "name": "aalike",
+                            "image": "event_logo/버거킹배너.jpeg",
+                            "text": "dd",
+                            "due": "2021-08-07T10:27:49",
+                            "view": 2,
+                            "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg"
                         }
-                    ]
+                    ],
+                    "off_event": []
                 }
             }
         )
@@ -192,7 +177,15 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
             on_event = on_event.union(on)
             off_event = off_event.union(off)
 
-        onevent = on_event.values()
-        offevent = off_event.values()
-        return JsonResponse({'on_event': list(onevent),
-                             'off_event': list(offevent)}, status=200)
+        onevent = []
+        for each_event in on_event.values():
+            each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
+            onevent.append(each_event)
+
+        offevent = []
+        for each_event in off_event.values():
+            each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
+            offevent.append(each_event)
+
+        return JsonResponse({'on_event': onevent,
+                             'off_event': offevent}, status=200)
