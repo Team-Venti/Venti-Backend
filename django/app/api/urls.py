@@ -14,7 +14,7 @@ from .view_brand import BrandViewSet
 from .view_event import EventViewSet
 from .view_subscribeEvent import SubscribeEventViewSet
 from .view_subscribeBrand import SubscribeBrandViewSet, BrandLike
-from .views_search import Search
+from .views_search import Search, GuestSearch
 from .view_eventforyou import EventforyouView
 from .view_weekly import Weekly
 from .view_notification import *
@@ -44,6 +44,7 @@ urlpatterns = [
     # path('notifications/', Notifications.as_view()),
     path('notifications/users/', NotificationUser.as_view()),
     path('noti/', view_notification.noti),
+    path('guest/search/', GuestSearch.as_view()),
     path('search/', Search.as_view()),
     path('weekly/', Weekly.as_view()),
     path('eventforyou/', EventforyouView.as_view(),name = "eventforyou"),
