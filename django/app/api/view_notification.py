@@ -101,7 +101,6 @@ class NotificationUser(APIView):
                 i['d-day'] = 1
             if i['notice_type'] == "end48":
                 i['d-day'] = 2
-
             if(now - i['created_date']).seconds // 3600 == 0:
                 i['noti_time'] = str((now - i['created_date']).seconds//60)+'분 전'
             else:
