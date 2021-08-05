@@ -297,15 +297,19 @@ class EventMain(APIView):
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each in events.values():
                 brand = Brand.objects.get(id=each['brand_id'])
+                ev = Event.objects.get(id=each['id'])
                 event.append(each)
                 event[-1]['brand_name'] = brand.name
+                event[-1]['d-day'] = (ev.due - now).days
         else:
             for i in brand_id:
                 events = Event.objects.filter(brand=i, category=category_id, due__gt=now).order_by('-id')
                 for each in events.values():
                     brand = Brand.objects.get(id=each['brand_id'])
+                    ev = Event.objects.get(id=each['id'])
                     event.append(each)
                     event[-1]['brand_name'] = brand.name
+                    event[-1]['d-day'] = (ev.due - now).days
 
         return JsonResponse({'event': event}, status=200)
 
