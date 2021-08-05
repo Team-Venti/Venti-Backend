@@ -48,34 +48,19 @@ response_schema_dict2 = {
             "application/json": {
                 "result": [
                     {
-                        "id": 3,
-                        "created_date": "2021-07-20",
-                        "update_date": "2021-07-20",
-                        "user_id": 2,
-                        "event_id": 'null',
-                        "brand_id": 1,
-                        "notice_type": "new",
-                        "url": 'null'
-                    },
-                    {
                         "id": 2,
-                        "created_date": "2021-07-20",
-                        "update_date": "2021-07-20",
-                        "user_id": 2,
+                        "created_date": "2021-08-05",
+                        "update_date": "2021-08-05",
+                        "user_id": 1,
                         "event_id": 3,
-                        "brand_id": 'null',
-                        "notice_type": "end",
-                        "url": 'null'
-                    },
-                    {
-                        "id": 1,
-                        "created_date": "2021-07-20",
-                        "update_date": "2021-07-20",
-                        "user_id": 2,
-                        "event_id": 1,
-                        "brand_id": 'null',
-                        "notice_type": "end",
-                        "url": 'null'
+                        "brand_id": 2,
+                        "notice_type": "end12",
+                        "url": "https://www.nike.com/kr/ko_kr/c/nike-membership",
+                        "brand_name": "bb",
+                        "event_name": "bblike",
+                        "brand_img": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/버거킹.png",
+                        "d-day": 0,
+                        "noti_time": 11
                     }
                 ]
             }
@@ -102,8 +87,24 @@ class NotificationUser(APIView):
         """
         user = request.user.id
         noti = Notification.objects.filter(user=user).order_by('-id')[:30]  # 30개까지 최신순 정렬
-        result = noti.values()
-        return JsonResponse({'result': list(result)}, status=200)
+        result = []
+        now = datetime.now()
+        for i in noti.values():
+            brand = Brand.objects.filter(id=i['brand_id'])
+            event = Event.objects.filter(id=i['event_id'])
+            i['brand_name'] = brand[0].name
+            i['event_name'] = event[0].name
+            i['brand_img'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(brand[0].image)
+            if i['notice_type'] == "end12":
+                i['d-day'] = 0
+            if i['notice_type'] == "end24":
+                i['d-day'] = 1
+            if i['notice_type'] == "end48":
+                i['d-day'] = 2
+            i['noti_time'] = (event[0].due - now).seconds//3600
+            result.append(i)
+
+        return JsonResponse({'result': result}, status=200)
 
 
 @permission_classes([])
@@ -133,16 +134,16 @@ def noti_bg():
         for i in endevent12:
             likeevents = SubscribeEvent.objects.filter(event=i.id)
             for j in likeevents:
-                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end")
+                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end12")
     # 이 이벤트를 좋아하는 유저 찾기
     if endevent24.count() != 0:
         for i in endevent24:
             likeevents = SubscribeEvent.objects.filter(event=i.id)
             for j in likeevents:
-                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end")
+                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end24")
     # 이 이벤트를 좋아하는 유저 찾기
     if endevent48.count() != 0:
         for i in endevent48:
             likeevents = SubscribeEvent.objects.filter(event=i.id)
             for j in likeevents:
-                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end")
+                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end48")
