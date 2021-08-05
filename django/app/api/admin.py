@@ -37,7 +37,7 @@ class EventAdmin(admin.ModelAdmin):
             for j in subscribe:
                 user = User.objects.filter(id=j.user.id)
                 user.update(noti_state=True)
-                Notification.objects.create(user=User.objects.get(id=j.user.id), event=Event.objects.get(name=i.name), notice_type="new")
+                Notification.objects.create(user=User.objects.get(id=j.user.id),brand=i.brand.id, event=Event.objects.get(name=i.name), notice_type="new")
 
     make_notification.short_description = '지정 이벤트의 알림 전송'
 
