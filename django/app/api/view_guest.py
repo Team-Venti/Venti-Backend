@@ -29,53 +29,27 @@ class BrandList(APIView):
                     "brand": [
                         {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-28",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
-                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
-                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
-                            "name": "vips",
-                            "text": "no1. stake house"
+                            "image": "brand_logo/무신사배너.jpeg",
+                            "banner_image": "brand_banner/무신사페이.jpeg",
+                            "name": "aa",
+                            "text": "ddd",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/무신사배너.jpeg",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/무신사페이.jpeg"
                         },
                         {
                             "id": 2,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
-                            "image": "",
-                            "banner_image": 'null',
-                            "name": "momstouch",
-                            "text": "no1. hamburger"
-                        },
-                        {
-                            "id": 5,
-                            "created_date": "2021-07-26",
-                            "update_date": "2021-07-26",
-                            "category_id": 1,
-                            "image": "brand_logo/KakaoTalk_20180520_163620948.jpg",
-                            "banner_image": 'null',
-                            "name": "김천",
-                            "text": "ㅁㄴㅇ"
-                        },
-                        {
-                            "id": 3,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "category_id": 2,
-                            "image": "",
-                            "banner_image": 'null',
-                            "name": "starbucks",
-                            "text": "no1. cooffee"
-                        },
-                        {
-                            "id": 4,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "category_id": 3,
-                            "image": "",
-                            "banner_image": 'null',
-                            "name": "nike",
-                            "text": "no1. sports"
+                            "image": "brand_logo/버거킹.png",
+                            "banner_image": "brand_banner/버거킹배너.jpeg",
+                            "name": "bb",
+                            "text": "bbb",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/버거킹.png",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/버거킹배너.jpeg"
                         }
                     ]
                 }
@@ -88,7 +62,7 @@ class BrandList(APIView):
             회원가입 선호브랜드 할때 브랜드 목록 불러옴
 
             # URL
-                - POST /api/guest/brand_list/
+                - GET /api/guest/brand_list/
 
         """
         brands = Brand.objects.filter(category=1).order_by('name')
@@ -97,14 +71,20 @@ class BrandList(APIView):
         brands = brands.union(brand2)
         brands = brands.union(brand3)
         brand = brands.values()
-        return JsonResponse({'brand': list(brand)}, status=200)
+        brand_list = []
+        for i in brand:
+            i['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['image'])
+            i['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['banner_image'])
+            brand_list.append(i)
+
+        return JsonResponse({'brand': brand_list}, status=200)
 
 
 @permission_classes([AllowAny])
 class BrandMain(APIView):
     '''
     비회원일때 api
-    POST api/guest/brand_main - 브랜드 메인
+    POST api/guest/brand_main/ - 브랜드 메인
     - request
     {
         "category_id" : int (category id)
@@ -117,34 +97,28 @@ class BrandMain(APIView):
                 "application/json": {
                     "brand": [
                         {
-                            "id": 2,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "category_id": 1,
-                            "image": "",
-                            "banner_image": 'null',
-                            "name": "momstouch",
-                            "text": "no1. hamburger"
-                        },
-                        {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-28",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
-                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
-                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
-                            "name": "vips",
-                            "text": "no1. stake house"
+                            "image": "brand_logo/무신사배너.jpeg",
+                            "banner_image": "brand_banner/무신사페이.jpeg",
+                            "name": "aa",
+                            "text": "ddd",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/무신사배너.jpeg",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/무신사페이.jpeg"
                         },
                         {
-                            "id": 5,
-                            "created_date": "2021-07-26",
-                            "update_date": "2021-07-26",
+                            "id": 2,
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
-                            "image": "brand_logo/KakaoTalk_20180520_163620948.jpg",
-                            "banner_image": 'null',
-                            "name": "김천",
-                            "text": "ㅁㄴㅇ"
+                            "image": "brand_logo/버거킹.png",
+                            "banner_image": "brand_banner/버거킹배너.jpeg",
+                            "name": "bb",
+                            "text": "bbb",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/버거킹.png",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/버거킹배너.jpeg"
                         }
                     ]
                 }
@@ -169,7 +143,12 @@ class BrandMain(APIView):
         category_id = data['category_id']
         brands = Brand.objects.filter(category=category_id).order_by('name')
         brand = brands.values()
-        return JsonResponse({'brand': list(brand)}, status=200)
+        brand_list = []
+        for i in brand:
+            i['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['image'])
+            i['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['banner_image'])
+            brand_list.append(i)
+        return JsonResponse({'brand': brand_list}, status=200)
 
 
 @permission_classes([AllowAny])
@@ -190,13 +169,15 @@ class BrandDetail(APIView):
                     "brand": [
                         {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-28",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
-                            "image": "brand_logo/KakaoTalk_20180520_163620948_CGTwIBG.jpg",
-                            "banner_image": "brand_banner/KakaoTalk_20180520_163620948.jpg",
-                            "name": "vips",
-                            "text": "no1. stake house"
+                            "image": "brand_logo/무신사배너.jpeg",
+                            "banner_image": "brand_banner/무신사페이.jpeg",
+                            "name": "aa",
+                            "text": "ddd",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/무신사배너.jpeg",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/무신사페이.jpeg"
                         }
                     ]
                 }
@@ -221,7 +202,12 @@ class BrandDetail(APIView):
         brand_id = data['brand_id']
         brands = Brand.objects.filter(id=brand_id)
         brand = brands.values()
-        return JsonResponse({'brand': list(brand)}, status=200)
+        brand_list = []
+        for i in brand:
+            i['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['image'])
+            i['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['banner_image'])
+            brand_list.append(i)
+        return JsonResponse({'brand': brand_list}, status=200)
 
 
 @permission_classes([AllowAny])
@@ -240,32 +226,38 @@ class EventMain(APIView):
             description="카테고리, 브랜드 별 이벤트 목록을 불러옴",
             examples={
                 "application/json": {
-                    "event": [
+                     "event": [
                         {
                             "id": 2,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
                             "brand_id": 1,
-                            "name": "vips_Event2",
-                            "image": "",
-                            "text": "vv",
-                            "due": "2010-02-12T00:00:00",
-                            "view": 'null',
-                            "url": 'null'
+                            "name": "aaunlike",
+                            "image": "event_logo/버거킹.png",
+                            "text": "dd",
+                            "due": "2021-08-07T10:28:05",
+                            "view": 1,
+                            "url": "http://event.com",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
+                            "brand_name": "aa",
+                            "d-day": 1
                         },
                         {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
                             "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "text": "v",
-                            "due": "2021-02-12T00:00:00",
-                            "view": 'null',
-                            "url": 'null'
+                            "name": "aalike",
+                            "image": "event_logo/버거킹배너.jpeg",
+                            "text": "dd",
+                            "due": "2021-08-07T10:27:49",
+                            "view": 0,
+                            "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
+                            "brand_name": "aa",
+                            "d-day": 1
                         }
                     ]
                 }
@@ -296,6 +288,7 @@ class EventMain(APIView):
         if len(brand_id) == 0:
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each in events.values():
+                each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
                 brand = Brand.objects.get(id=each['brand_id'])
                 ev = Event.objects.get(id=each['id'])
                 event.append(each)
@@ -305,6 +298,7 @@ class EventMain(APIView):
             for i in brand_id:
                 events = Event.objects.filter(brand=i, category=category_id, due__gt=now).order_by('-id')
                 for each in events.values():
+                    each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
                     brand = Brand.objects.get(id=each['brand_id'])
                     ev = Event.objects.get(id=each['id'])
                     event.append(each)
@@ -332,16 +326,18 @@ class EventDetail(APIView):
                     "event": [
                         {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
                             "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "text": "v",
-                            "due": "2021-02-12T00:00:00",
-                            "view": 'null',
-                            "url": 'null'
+                            "name": "aalike",
+                            "image": "event_logo/버거킹배너.jpeg",
+                            "text": "dd",
+                            "due": "2021-08-07T10:27:49",
+                            "view": 1,
+                            "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
+                            "brand_name": "aa"
                         }
                     ]
                 }
@@ -368,6 +364,7 @@ class EventDetail(APIView):
         events.update(view=events[0].view+1)
         event = []
         for each_event in events.values():
+            each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             brand = Brand.objects.get(id=each_event['brand_id'])
             event.append(each_event)
             event[-1]['brand_name'] = brand.name
@@ -392,32 +389,34 @@ class EventDeadline(APIView):
                 "application/json": {
                     "on_event": [
                         {
-                            "id": 4,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 3,
-                            "brand_id": 4,
-                            "name": "nike_Event1",
-                            "image": "",
-                            "text": "n1",
-                            "due": "2030-02-12T00:00:00",
-                            "view": 'null',
-                            "url": 'null',
-                            "brand_name": "nike"
+                            "id": 1,
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "aalike",
+                            "image": "event_logo/버거킹배너.jpeg",
+                            "text": "dd",
+                            "due": "2021-08-07T10:27:49",
+                            "view": 1,
+                            "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
+                            "brand_name": "aa"
                         },
                         {
-                            "id": 38,
-                            "created_date": "2021-08-02",
-                            "update_date": "2021-08-02",
-                            "category_id": 3,
-                            "brand_id": 4,
-                            "name": "vips(nike_event)",
-                            "image": "event_logo/KakaoTalk_20180520_163620948_cSBCjiS.jpg",
-                            "text": "hi",
-                            "due": "2021-10-01T00:00:00",
-                            "view": "0000-00-00",
-                            "url": "http://www.naver.com",
-                            "brand_name": "nike"
+                            "id": 2,
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "aaunlike",
+                            "image": "event_logo/버거킹.png",
+                            "text": "dd",
+                            "due": "2021-08-07T10:28:05",
+                            "view": 1,
+                            "url": "http://event.com",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
+                            "brand_name": "aa"
                         }
                     ],
                     "off_event": []
@@ -446,6 +445,7 @@ class EventDeadline(APIView):
         now = datetime.datetime.now()
         events = Event.objects.filter(brand=brand_id)
         for each_event in events.values():
+            each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             brand = Brand.objects.get(id=each_event['brand_id'])
             if each_event['due'] > now:
                 on_event.append(each_event)

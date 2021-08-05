@@ -46,26 +46,30 @@ class BrandViewSet(viewsets.ModelViewSet):
                     "brand": [
                         {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
-                            "image": "",
-                            "name": "vips",
-                            "text": "no1. stake house"
+                            "image": "brand_logo/무신사배너.jpeg",
+                            "banner_image": "brand_banner/무신사페이.jpeg",
+                            "name": "aa",
+                            "text": "ddd",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/무신사배너.jpeg",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/무신사페이.jpeg",
+                            "subs": "true"
                         },
                         {
                             "id": 2,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
-                            "image": "",
-                            "name": "momstouch",
-                            "text": "no1. hamburger"
+                            "image": "brand_logo/버거킹.png",
+                            "banner_image": "brand_banner/버거킹배너.jpeg",
+                            "name": "bb",
+                            "text": "bbb",
+                            "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/버거킹.png",
+                            "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/버거킹배너.jpeg",
+                            "subs": "true"
                         }
-                    ],
-                    "subscribe": [
-                        "Yes",
-                        "No"
                     ]
                 }
             }
@@ -112,20 +116,19 @@ class BrandViewSet(viewsets.ModelViewSet):
             description="브랜드를 클릭했을때 해당 브랜드의 상세 정보와 구독 정보를 제공하는 API",
             examples={
                 "application/json": {
-                    "brand": [
-                        {
-                            "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-11",
-                            "category_id": 1,
-                            "image": "",
-                            "name": "vips",
-                            "text": "no1. stake house"
-                        }
-                    ],
-                    "subscribe": [
-                        "Yes"
-                    ]
+                    "brand": {
+                        "id": 1,
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
+                        "category_id": 1,
+                        "image": "brand_logo/무신사배너.jpeg",
+                        "banner_image": "brand_banner/무신사페이.jpeg",
+                        "name": "aa",
+                        "text": "ddd",
+                        "brand_logo_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_logo/무신사배너.jpeg",
+                        "brand_banner_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/brand_banner/무신사페이.jpeg",
+                        "subs": "true"
+                    }
                 }
             }
         )

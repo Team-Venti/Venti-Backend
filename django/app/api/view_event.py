@@ -66,34 +66,36 @@ class EventViewSet(viewsets.ModelViewSet):
                 "application/json": {
                     "on_event": [
                         {
-                            "id": 4,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 3,
-                            "brand_id": 4,
-                            "name": "nike_Event1",
-                            "image": "",
-                            "text": "n1",
-                            "due": "2030-02-12T00:00:00",
-                            "view": 'null',
-                            "url": 'null',
-                            "subs": 'false',
-                            "brand_name": "nike"
+                            "id": 1,
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "aalike",
+                            "image": "event_logo/버거킹배너.jpeg",
+                            "text": "dd",
+                            "due": "2021-08-07T10:27:49",
+                            "view": 1,
+                            "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
+                            "subs": "true",
+                            "brand_name": "aa"
                         },
                         {
-                            "id": 38,
-                            "created_date": "2021-08-02",
-                            "update_date": "2021-08-02",
-                            "category_id": 3,
-                            "brand_id": 4,
-                            "name": "vips(nike_event)",
-                            "image": "event_logo/KakaoTalk_20180520_163620948_cSBCjiS.jpg",
-                            "text": "hi",
-                            "due": "2021-10-01T00:00:00",
-                            "view": "0000-00-00",
-                            "url": "http://www.naver.com",
-                            "subs": 'true',
-                            "brand_name": "nike"
+                            "id": 2,
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "aaunlike",
+                            "image": "event_logo/버거킹.png",
+                            "text": "dd",
+                            "due": "2021-08-07T10:28:05",
+                            "view": 1,
+                            "url": "http://event.com",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
+                            "subs": "false",
+                            "brand_name": "aa"
                         }
                     ],
                     "off_event": []
@@ -161,39 +163,39 @@ class EventViewSet(viewsets.ModelViewSet):
             description="해당 카테고리 + 브랜드 필터링을 거친 모든 이벤트 목록과 좋아요 정보를 제공하는 API",
             examples={
                 "application/json": {
-                    "event": [
-                        {
-                            "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 1,
-                            "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "v",
-                            "due": "2021-02-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
-                        },
+                     "event": [
                         {
                             "id": 2,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
                             "brand_id": 1,
-                            "name": "vips_Event2",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "vv",
-                            "due": "2010-02-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
+                            "name": "aaunlike",
+                            "image": "event_logo/버거킹.png",
+                            "text": "dd",
+                            "due": "2021-08-07T10:28:05",
+                            "view": 1,
+                            "url": "http://event.com",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
+                            "brand_name": "aa",
+                            "subs": "false"
+                        },
+                        {
+                            "id": 1,
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "aalike",
+                            "image": "event_logo/버거킹배너.jpeg",
+                            "text": "dd",
+                            "due": "2021-08-07T10:27:49",
+                            "view": 1,
+                            "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
+                            "brand_name": "aa",
+                            "subs": "true"
                         }
-                    ],
-                    "subscribe": [
-                        "Yes",
-                        "No"
                     ]
                 }
             }
@@ -271,21 +273,20 @@ class EventViewSet(viewsets.ModelViewSet):
                     "event": [
                         {
                             "id": 1,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
+                            "created_date": "2021-08-04",
+                            "update_date": "2021-08-04",
                             "category_id": 1,
                             "brand_id": 1,
-                            "name": "vips_Event1",
-                            "image": "",
-                            "banner_image": "",
-                            "text": "v",
-                            "due": "2021-02-12T00:00:00",
-                            "weekly_view": 'null',
-                            "url": 'null'
+                            "name": "aalike",
+                            "image": "event_logo/버거킹배너.jpeg",
+                            "text": "dd",
+                            "due": "2021-08-07T10:27:49",
+                            "view": 2,
+                            "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
+                            "brand_name": "aa",
+                            "subs": "true"
                         }
-                    ],
-                    "subscribe": [
-                        "Yes"
                     ]
                 }
             }
