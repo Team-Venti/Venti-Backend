@@ -30,6 +30,7 @@ class Brand(DateInfo):
     banner_image = models.ImageField(null=True, upload_to="brand_banner")
     name = models.CharField(max_length=50)
     text = models.TextField(null=True)
+    view = models.IntegerField(null=True, default=0)
 
     def __str__(self):
         return self.name
@@ -51,10 +52,9 @@ class Event(DateInfo):
 
 class Notification(DateInfo):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="notifications", null=True)
-    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="notifications", null=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="notifications")
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="notifications")
     notice_type = models.CharField(max_length=10)  # new / end
-    url = models.URLField(null=True)
 
     def __str__(self):
         return str(self.user.username) + "의 " + str(self.event) + " 이벤트 알림"
@@ -74,11 +74,3 @@ class SubscribeEvent(DateInfo):
 
     def __str__(self):
         return str(self.user.username) + "의 " + str(self.event) + " 이벤트 좋아요"
-
-
-class Banner(DateInfo):
-    name = models.CharField(max_length=50)
-    count = models.IntegerField(null=True, default=0)
-
-    def __str__(self):
-        return str(self.name)

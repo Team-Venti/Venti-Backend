@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 
-from .models import SubscribeEvent, Event, User, Banner
+from .models import SubscribeEvent, Event, User, Brand
 from .serializer_subscribeEvent import SubscribeEventSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -70,8 +70,8 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
         event = Event.objects.get(id=event_id)
         SubscribeEvent.objects.create(user=User.objects.get(id=user_id),
                                       event=event)
-        banner = Banner.objects.filter(name=event.brand.name)
-        banner.update(count=banner[0].count + 1)
+        brand = Brand.objects.filter(id=event.brand.id)
+        brand.update(view=brand[0].view + 1)
         return JsonResponse({"message": "이벤트 좋아요 성공"}, status=200)
 
     response_schema_dict2 = {
@@ -106,8 +106,8 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
         user_id = request.user.id
         event_id = data['event_id']
         event = Event.objects.get(id=event_id)
-        banner = Banner.objects.filter(name=event.brand.name)
-        banner.update(count=banner[0].count - 1)
+        brand = Brand.objects.filter(id=event.brand.id)
+        brand.update(view=brand[0].view - 1)
         subscribe = SubscribeEvent.objects.filter(user=user_id, event=event_id)
         subscribe.delete()
         return JsonResponse({"message": "이벤트 좋아요 취소"}, status=200)

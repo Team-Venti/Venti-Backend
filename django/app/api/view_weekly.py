@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
-from .models import Event, Brand, Banner
+from .models import Event, Brand
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -69,6 +69,6 @@ class Weekly(APIView):
                 - GET /api/weekly/
 
         """
-        hot_brand = Banner.objects.all().order_by('-count')
+        hot_brand = Brand.objects.all().order_by('-view')
         result = hot_brand.values()
         return JsonResponse({'result': list(result)}, status=200)

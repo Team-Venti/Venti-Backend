@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import User, Brand, Event, Category, SubscribeBrand, SubscribeEvent, Notification, Banner
+from .models import User, Brand, Event, Category, SubscribeBrand, SubscribeEvent, Notification
 
 # admin.site.register(User)
 # admin.site.register(Brand)
@@ -23,13 +23,6 @@ class UserAdmin(admin.ModelAdmin):
 class BrandAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'category']
     list_display_links = ['id', 'name']
-    actions = ['make_banner_brand']
-
-    def make_banner_brand(self, request, queryset):
-        for i in queryset:
-            Banner.objects.create(name=i.name, count=0)
-
-    make_banner_brand.short_description = '지정 브랜드의 배너 브랜드 추가'
 
 
 @admin.register(Event)
@@ -71,9 +64,3 @@ class SubscribeEventAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'event', 'notice_type', 'brand']
     list_display_links = ['id', 'user']
-
-
-@admin.register(Banner)
-class BannerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'count']
-    list_display_links = ['id', 'name']
