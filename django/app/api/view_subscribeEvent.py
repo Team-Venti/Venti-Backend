@@ -130,7 +130,8 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
                             "due": "2021-08-07T10:28:38",
                             "view": 0,
                             "url": "https://www.hollys.co.kr/news/event/view.do?idx=263&pageNo=1&division=",
-                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/스타벅스배너.png"
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/스타벅스배너.png",
+                            "d-day": 1
                         },
                         {
                             "id": 1,
@@ -144,7 +145,8 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
                             "due": "2021-08-07T10:27:49",
                             "view": 2,
                             "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
-                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg"
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
+                            "d-day": 1
                         }
                     ],
                     "off_event": []
@@ -179,13 +181,17 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
 
         onevent = []
         for each_event in on_event.values():
+            ev = Event.objects.get(id=each_event['id'])
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             onevent.append(each_event)
+            onevent[-1]['d-day'] = (ev.due - now).days
 
         offevent = []
         for each_event in off_event.values():
+            ev = Event.objects.get(id=each_event['id'])
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             offevent.append(each_event)
+            offevent[-1]['d-day'] = (ev.due - now).days
 
         return JsonResponse({'on_event': onevent,
                              'off_event': offevent}, status=200)

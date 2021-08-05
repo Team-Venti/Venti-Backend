@@ -401,7 +401,8 @@ class EventDeadline(APIView):
                             "view": 1,
                             "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
-                            "brand_name": "aa"
+                            "brand_name": "aa",
+                            "d-day": 1
                         },
                         {
                             "id": 2,
@@ -416,7 +417,8 @@ class EventDeadline(APIView):
                             "view": 1,
                             "url": "http://event.com",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
-                            "brand_name": "aa"
+                            "brand_name": "aa",
+                            "d-day": 1
                         }
                     ],
                     "off_event": []
@@ -447,12 +449,15 @@ class EventDeadline(APIView):
         for each_event in events.values():
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             brand = Brand.objects.get(id=each_event['brand_id'])
+            ev = Event.objects.get(id=each_event['id'])
             if each_event['due'] > now:
                 on_event.append(each_event)
                 on_event[-1]['brand_name'] = brand.name
+                on_event[-1]['d-day'] = (ev.due - now).days
             else:
                 off_event.append(each_event)
                 off_event[-1]['brand_name'] = brand.name
+                off_event[-1]['d-day'] = (ev.due - now).days
 
         return JsonResponse({"on_event": on_event,
                              "off_event": off_event}, status=200)
