@@ -14,50 +14,39 @@ response_schema_dict = {
         description="검색 결과를 보여준다.",
         examples={
             "application/json": {
-            "events": [
-                    {
-                        "id": 38,
-                        "created_date": "2021-08-02",
-                        "update_date": "2021-08-02",
-                        "category_id": 3,
-                        "brand_id": 4,
-                        "name": "vips(nike_event)",
-                        "image": "event_logo/KakaoTalk_20180520_163620948_cSBCjiS.jpg",
-                        "text": "hi",
-                        "due": "2021-10-01T00:00:00",
-                        "view": "0000-00-00",
-                        "url": "http://www.naver.com",
-                        "d-day": 56
-                    },
+                "events": [
                     {
                         "id": 1,
-                        "created_date": "2021-07-11",
-                        "update_date": "2021-07-21",
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
                         "category_id": 1,
                         "brand_id": 1,
-                        "name": "vips_Event1",
-                        "image": "",
-                        "text": "v",
-                        "due": "2021-08-08T00:00:00",
-                        "view": 'null',
-                        "url": 'null',
-                        "d-day": 2
+                        "name": "aalike",
+                        "image": "event_logo/버거킹배너.jpeg",
+                        "text": "dd",
+                        "due": "2021-08-07T10:27:49",
+                        "view": 2,
+                        "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                        "d-day": 1,
+                        "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg"
                     },
                     {
                         "id": 2,
-                        "created_date": "2021-07-11",
-                        "update_date": "2021-07-21",
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
                         "category_id": 1,
                         "brand_id": 1,
-                        "name": "vips_Event2",
-                        "image": "",
-                        "text": "vv",
-                        "due": "2010-08-07T00:00:00",
-                        "view": 'null',
-                        "url": 'null',
-                        "d-day": 1
+                        "name": "aaunlike",
+                        "image": "event_logo/버거킹.png",
+                        "text": "dd",
+                        "due": "2021-08-07T10:28:05",
+                        "view": 1,
+                        "url": "http://event.com",
+                        "d-day": 1,
+                        "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png"
                     }
                 ]
+
             }
         }
     )
@@ -97,10 +86,13 @@ class GuestSearch(APIView):
 
         # 중복 제거
         unique = { each['name'] : each for each in events }.values()
+        event_list = []
+        for each_event in unique:
+            each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
+            event_list.append(each_event)
 
         return Response({
-            "events" : unique
-            # 'search_brand': list(brand.values())
+            "events" : event_list
         }, status=200) # list(result_set)
 
 
@@ -111,37 +103,39 @@ response_schema_dict2 = {
         examples={
             "application/json": {
                 "events": [
-                        {
-                            "id": 4,
-                            "created_date": "2021-07-11",
-                            "update_date": "2021-07-21",
-                            "category_id": 3,
-                            "brand_id": 4,
-                            "name": "nike_Event1",
-                            "image": "",
-                            "text": "n1",
-                            "due": "2030-02-12T00:00:00",
-                            "view": 'null',
-                            "url": 'null',
-                            "subs": 'false',
-                            "d-day": 3112
-                        },
-                        {
-                            "id": 38,
-                            "created_date": "2021-08-02",
-                            "update_date": "2021-08-02",
-                            "category_id": 3,
-                            "brand_id": 4,
-                            "name": "vips(nike_event)",
-                            "image": "event_logo/KakaoTalk_20180520_163620948_cSBCjiS.jpg",
-                            "text": "hi",
-                            "due": "2021-10-01T00:00:00",
-                            "view": "0000-00-00",
-                            "url": "http://www.naver.com",
-                            "subs": 'true',
-                            "d-day": 56
-                        }
-                    ]
+                    {
+                        "id": 1,
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
+                        "category_id": 1,
+                        "brand_id": 1,
+                        "name": "aalike",
+                        "image": "event_logo/버거킹배너.jpeg",
+                        "text": "dd",
+                        "due": "2021-08-07T10:27:49",
+                        "view": 2,
+                        "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                        "subs": "true",
+                        "d-day": 1,
+                        "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg"
+                    },
+                    {
+                        "id": 2,
+                        "created_date": "2021-08-04",
+                        "update_date": "2021-08-04",
+                        "category_id": 1,
+                        "brand_id": 1,
+                        "name": "aaunlike",
+                        "image": "event_logo/버거킹.png",
+                        "text": "dd",
+                        "due": "2021-08-07T10:28:05",
+                        "view": 1,
+                        "url": "http://event.com",
+                        "subs": "false",
+                        "d-day": 1,
+                        "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png"
+                    }
+                ]
             }
         }
     )
@@ -196,8 +190,11 @@ class Search(APIView):
 
         # 중복 제거
         unique = { each['name'] : each for each in events }.values()
-
+        event_list =[]
+        for each_event in unique:
+            each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
+            event_list.append(each_event)
         return Response({
-            "events" : unique
+            "events" : event_list
             # 'search_brand': list(brand.values())
         }, status=200) # list(result_set)
