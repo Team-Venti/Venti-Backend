@@ -81,7 +81,7 @@ class EventforyouView(APIView):
     @swagger_auto_schema(request_body= openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'category': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
+            'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
         }
     ), responses=response_schema_dict)
 
@@ -89,7 +89,9 @@ class EventforyouView(APIView):
         events = []
         subevents = []
         user = request.user.id
-        category_id = request.POST['category']
+        data = JSONParser().parse(request)  # 아 D-1 이거 줘야한다...
+        category_id = data['category_id']
+        # category_id = request.POST['category']
         subscribeevents = SubscribeEvent.objects.filter(user=user)
         for k in subscribeevents.values():
             subevents.append(k['event_id'])
@@ -102,9 +104,11 @@ class EventforyouView(APIView):
             eventforyou = Event.objects.filter(brand=i.brand,category = category_id, due__gt=now)
             for j in eventforyou.values() :
                 j['brand_name'] = brandname
-                events.append(j)
+                j['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/'+str(j['image'])
                 if j['id'] in subevents:
                     j['subs'] = True
                 else:
                     j['subs'] = False
+                events.append(j)
+
         return JsonResponse({'event' : events}, status=200)

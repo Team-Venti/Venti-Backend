@@ -10,7 +10,7 @@ from drf_yasg import openapi
 from rest_framework.response import Response
 import datetime
 from .models import Event, Brand, SubscribeEvent, Notification, SubscribeBrand, User
-from .serializer_event import EventSerializer, EventListSerializer
+from .serializer_event import EventSerializer
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
 # jwt
@@ -129,6 +129,8 @@ class EventViewSet(viewsets.ModelViewSet):
         events = Event.objects.filter(brand=brand_id)
         for each_event in events.values():
             brand = Brand.objects.get(id=each_event['brand_id'])
+            # 이벤트 사진 url
+            each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             # brand_name = each_event['brand'].name
             for each_sub in subscribes:
                 if each_event['id'] == each_sub.event.id:
@@ -227,6 +229,8 @@ class EventViewSet(viewsets.ModelViewSet):
         if len(brand_id) == 0:
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each_event in events.values():
+                # 이벤트 사진 url
+                each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
                 for each_sub in subscribes:
                     if each_sub.event.id == each_event['id']:
                         brand = Brand.objects.get(id=each_event['brand_id'])
@@ -243,6 +247,7 @@ class EventViewSet(viewsets.ModelViewSet):
             for i in brand_id:
                 events = Event.objects.filter(brand=i, category=category_id, due__gt=now).order_by('-id')
                 for each_event in events.values():
+                    each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
                     for each_sub in subscribes:
                         if each_sub.event.id == each_event['id']:
                             brand = Brand.objects.get(id=each_event['brand_id'])
@@ -312,6 +317,7 @@ class EventViewSet(viewsets.ModelViewSet):
         subscribes = SubscribeEvent.objects.filter(user=user_id)
         event = []
         for each_event in events.values():
+            each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             for each_sub in subscribes:
                 if each_sub.event.id == each_event['id']:
                     brand = Brand.objects.get(id=each_event['brand_id'])

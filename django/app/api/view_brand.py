@@ -93,17 +93,18 @@ class BrandViewSet(viewsets.ModelViewSet):
         user_id = request.user.id
         brands = Brand.objects.filter(category=category_id).order_by('name')
         subscribes = SubscribeBrand.objects.filter(user=user_id)
-        subscribe = []
-        for i in brands:
+        brand_list = []
+        for i in brands.values():
+            i['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['image'])
+            i['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['banner_image'])
             for j in subscribes:
-                if i.id == j.brand.id:
-                    subscribe.append("Yes")
+                if i['id'] == j.brand.id:
+                    i['subs'] = True
                     break
             else:
-                subscribe.append("No")
-        brand = brands.values()
-        return JsonResponse({'brand': list(brand),
-                             'subscribe': subscribe}, status=200)
+                i['subs'] = False
+            brand_list.append(i)
+        return JsonResponse({'brand': brand_list}, status=200)
 
 
     response_schema_dict1 = {
@@ -151,13 +152,17 @@ class BrandViewSet(viewsets.ModelViewSet):
         user_id = request.user.id
         brands = Brand.objects.filter(id=brand_id)
         subscribes = SubscribeBrand.objects.filter(user=user_id)
-        subscribe = []
+        brand = brands.values()[0]
+        # 브랜드 이미지
+        brand['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(brand['image'])
+        brand['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(brand['banner_image'])
+
+        # 브랜드 구독정보
         for j in subscribes:
-            if brands[0].id == j.brand.id:
-                subscribe.append("Yes")
+            if brand['id'] == j.brand.id:
+                brand['subs'] = True
                 break
         else:
-            subscribe.append("No")
-        brand = brands.values()
-        return JsonResponse({'brand': list(brand),
-                             'subscribe': subscribe}, status=200)
+            brand['subs'] = False
+
+        return JsonResponse({'brand': brand}, status=200)
