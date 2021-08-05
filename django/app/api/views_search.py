@@ -58,7 +58,7 @@ class Search(APIView):
             검색 결과
 
             # URL
-                - GET /api/search/
+                - GET /api/search/?search=vips
 
         """
         name = request.GET['search']

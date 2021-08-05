@@ -79,7 +79,8 @@ class EventViewSet(viewsets.ModelViewSet):
                             "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
                             "subs": "true",
-                            "brand_name": "aa"
+                            "brand_name": "aa",
+                            "d-day": 1
                         },
                         {
                             "id": 2,
@@ -95,7 +96,8 @@ class EventViewSet(viewsets.ModelViewSet):
                             "url": "http://event.com",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
                             "subs": "false",
-                            "brand_name": "aa"
+                            "brand_name": "aa",
+                            "d-day": 1
                         }
                     ],
                     "off_event": []
@@ -130,30 +132,35 @@ class EventViewSet(viewsets.ModelViewSet):
         subscribes = SubscribeEvent.objects.filter(user=user_id)
         events = Event.objects.filter(brand=brand_id)
         for each_event in events.values():
+            ev = Event.objects.get(id=each_event['id'])
             brand = Brand.objects.get(id=each_event['brand_id'])
             # 이벤트 사진 url
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
-            # brand_name = each_event['brand'].name
             for each_sub in subscribes:
                 if each_event['id'] == each_sub.event.id:
                     if each_event['due'] > now:
                         on_event.append(each_event)
                         on_event[-1]['subs'] = True
                         on_event[-1]['brand_name'] = brand.name
+                        on_event[-1]['d-day'] = (ev.due - now).days
                     else:
                         off_event.append(each_event)
                         off_event[-1]['subs'] = True
                         off_event[-1]['brand_name'] = brand.name
+                        off_event[-1]['d-day'] = (ev.due - now).days
+
                     break
             else:
                 if each_event['due'] > now:
                     on_event.append(each_event)
                     on_event[-1]['subs'] = False
                     on_event[-1]['brand_name'] = brand.name
+                    on_event[-1]['d-day'] = (ev.due - now).days
                 else:
                     off_event.append(each_event)
                     off_event[-1]['subs'] = False
                     off_event[-1]['brand_name'] = brand.name
+                    off_event[-1]['d-day'] = (ev.due - now).days
 
         return JsonResponse({"on_event": on_event,
                              "off_event": off_event}, status=200)
@@ -178,7 +185,8 @@ class EventViewSet(viewsets.ModelViewSet):
                             "url": "http://event.com",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
                             "brand_name": "aa",
-                            "subs": "false"
+                            "subs": "false",
+                            "d-day": 1
                         },
                         {
                             "id": 1,
@@ -194,7 +202,8 @@ class EventViewSet(viewsets.ModelViewSet):
                             "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
                             "brand_name": "aa",
-                            "subs": "true"
+                            "subs": "true",
+                            "d-day": 1
                         }
                     ]
                 }
@@ -221,7 +230,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 - POST /api/events/main/
 
         """
-        data = JSONParser().parse(request)  # 아 D-1 이거 줘야한다...
+        data = JSONParser().parse(request)
         category_id = data['category_id']
         brand_id = data['brand_id']
         user_id = request.user.id
@@ -231,6 +240,7 @@ class EventViewSet(viewsets.ModelViewSet):
         if len(brand_id) == 0:
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each_event in events.values():
+                ev = Event.objects.get(id=each_event['id'])
                 # 이벤트 사진 url
                 each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
                 for each_sub in subscribes:
@@ -239,16 +249,19 @@ class EventViewSet(viewsets.ModelViewSet):
                         event.append(each_event)
                         event[-1]['brand_name'] = brand.name
                         event[-1]['subs'] = True
+                        event[-1]['d-day'] = (ev.due - now).days
                         break
                 else:
                     brand = Brand.objects.get(id=each_event['brand_id'])
                     event.append(each_event)
                     event[-1]['brand_name'] = brand.name
                     event[-1]['subs'] = False
+                    event[-1]['d-day'] = (ev.due - now).days
         else:
             for i in brand_id:
                 events = Event.objects.filter(brand=i, category=category_id, due__gt=now).order_by('-id')
                 for each_event in events.values():
+                    ev = Event.objects.get(id=each_event['id'])
                     each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
                     for each_sub in subscribes:
                         if each_sub.event.id == each_event['id']:
@@ -256,12 +269,14 @@ class EventViewSet(viewsets.ModelViewSet):
                             event.append(each_event)
                             event[-1]['brand_name'] = brand.name
                             event[-1]['subs'] = True
+                            event[-1]['d-day'] = (ev.due - now).days
                             break
                     else:
                         brand = Brand.objects.get(id=each_event['brand_id'])
                         event.append(each_event)
                         event[-1]['brand_name'] = brand.name
                         event[-1]['subs'] = False
+                        event[-1]['d-day'] = (ev.due - now).days
 
         return JsonResponse({'event': event}, status=200)
 
