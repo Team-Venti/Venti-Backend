@@ -268,8 +268,8 @@ class EventMain(APIView):
         type=openapi.TYPE_OBJECT,
         properties={
             'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
-            'brand_id': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER),
-                                       description='int')
+            'brand_name': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING),
+                                       description='string')
         }
     ), responses=response_schema_dict4)
     def post(self, request, format=None):
@@ -282,10 +282,10 @@ class EventMain(APIView):
         """
         data = JSONParser().parse(request)
         category_id = data['category_id']
-        brand_id = data['brand_id']
+        brand_name = data['brand_name']
         now = datetime.datetime.now()
         event = []
-        if len(brand_id) == 0:
+        if len(brand_name) == 0:
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each in events.values():
                 each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
@@ -295,8 +295,9 @@ class EventMain(APIView):
                 event[-1]['brand_name'] = brand.name
                 event[-1]['d-day'] = (ev.due - now).days
         else:
-            for i in brand_id:
-                events = Event.objects.filter(brand=i, category=category_id, due__gt=now).order_by('-id')
+            for i in brand_name:
+                br = Brand.objects.get(name=i)
+                events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
                 for each in events.values():
                     each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
                     brand = Brand.objects.get(id=each['brand_id'])
