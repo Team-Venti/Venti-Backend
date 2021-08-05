@@ -215,8 +215,8 @@ class EventViewSet(viewsets.ModelViewSet):
         type=openapi.TYPE_OBJECT,
         properties={
             'category_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
-            'brand_id': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER),
-                                       description='int')
+            'brand_name': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING),
+                                       description='string')
         }
     ), responses=response_schema_dict2)
     @action(detail=False, methods=['post'])
@@ -232,12 +232,12 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         data = JSONParser().parse(request)
         category_id = data['category_id']
-        brand_id = data['brand_id']
+        brand_name = data['brand_name']
         user_id = request.user.id
         subscribes = SubscribeEvent.objects.filter(user=user_id)
         now = datetime.datetime.now()
         event = []
-        if len(brand_id) == 0:
+        if len(brand_name) == 0:
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each_event in events.values():
                 ev = Event.objects.get(id=each_event['id'])
@@ -258,8 +258,9 @@ class EventViewSet(viewsets.ModelViewSet):
                     event[-1]['subs'] = False
                     event[-1]['d-day'] = (ev.due - now).days
         else:
-            for i in brand_id:
-                events = Event.objects.filter(brand=i, category=category_id, due__gt=now).order_by('-id')
+            for i in brand_name:
+                br = Brand.objects.get(name=i)
+                events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
                 for each_event in events.values():
                     ev = Event.objects.get(id=each_event['id'])
                     each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
