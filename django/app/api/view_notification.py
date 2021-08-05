@@ -101,9 +101,13 @@ class NotificationUser(APIView):
                 i['d-day'] = 1
             if i['notice_type'] == "end48":
                 i['d-day'] = 2
-            i['noti_time'] = (event[0].due - now).seconds//3600
-            result.append(i)
 
+            if(now - i['created_date']).seconds // 3600 == 0:
+                i['noti_time'] = str((now - i['created_date']).seconds//60)+'분 전'
+            else:
+                i['noti_time'] = str((now - i['created_date']).seconds // 3600) + '시간 전'
+            result.append(i)
+        request.user.noti_state = False
         return JsonResponse({'result': result}, status=200)
 
 
@@ -134,16 +138,22 @@ def noti_bg():
         for i in endevent12:
             likeevents = SubscribeEvent.objects.filter(event=i.id)
             for j in likeevents:
+                user = User.objects.filter(id=j.user.id)
+                user.update(noti_state=True)
                 Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end12")
     # 이 이벤트를 좋아하는 유저 찾기
     if endevent24.count() != 0:
         for i in endevent24:
             likeevents = SubscribeEvent.objects.filter(event=i.id)
             for j in likeevents:
+                user = User.objects.filter(id=j.user.id)
+                user.update(noti_state=True)
                 Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end24")
     # 이 이벤트를 좋아하는 유저 찾기
     if endevent48.count() != 0:
         for i in endevent48:
             likeevents = SubscribeEvent.objects.filter(event=i.id)
             for j in likeevents:
+                user = User.objects.filter(id=j.user.id)
+                user.update(noti_state=True)
                 Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end48")

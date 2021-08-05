@@ -23,6 +23,11 @@ from rest_framework.views import APIView
 #redoc
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
+
+from api.models import User
+
 
 register_response_schema_dict = {
     "201": openapi.Response(
@@ -100,6 +105,17 @@ user_schema_dict = {
                 "email": "ted@naver.com",
                 "gender": "",
                 "birth": "null",
+            }
+        }
+    )
+}
+
+check_duplicate_schema_dict= {
+"200": openapi.Response(
+        description="중복 확인 -> 있으면 exist 없으면 not exist",
+        examples={
+            "application/json": {
+                "data":"exist"
             }
         }
     )
@@ -259,41 +275,23 @@ class Unsubscribe(generics.GenericAPIView):
     """
         회원 탈퇴
         ---
-        # URL
+        # URL[GET]
             - POST /accounts/unsubscribe/
         # header
             - Authorization : JWT ey93... [jwt token]
-        # 전달 형식 : formdata
-            - {
-                username : string   //본인확인용
-               }
      """
     serializer_class = UnsubscribeSerializer
-    @swagger_auto_schema(request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'username':openapi.Schema(type=openapi.TYPE_STRING, description='id (탈퇴 확인 같은거.. 한번 치라고)'),
-            }
-        ),responses=unsubscribe_response_schema_dict)
-    def post(self, request, *args, **kwargs):
+    @swagger_auto_schema(responses=unsubscribe_response_schema_dict)
+    def get(self, request, *args, **kwargs):
         # serializer = self.get_serializer(data=request.data)
         user = request.user
-        if user.username == request.POST["username"]:
-            user.delete()
-            return Response(
-                {
-                    "success": True,
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        else:
-            return Response(
-                {
-                    "success": False,
-                    "user" : user.username,
-                },
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
+        user.delete()
+        return Response(
+            {
+                "success": True,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class UserDetail(generics.GenericAPIView):
@@ -320,7 +318,78 @@ class UserDetail(generics.GenericAPIView):
                 "email": user.email,
                 "gender": user.gender,
                 "birth" : user.birth,
-
+                "noti_state": user.noti_state,
             },
             status=status.HTTP_200_OK,
         )
+
+
+# 중복 체크
+@permission_classes([])
+@authentication_classes([])
+class CheckUsername(generics.GenericAPIView):
+    """
+        Username 중복체크 [GET]
+        ---
+        # URL
+            - POST /accounts/checkusername/?username=kuku
+        # Response
+            - "data" : "exist" -> 존재하는 Username 입니다.
+            - "data" : "not exist" -> 사용가능한 Username 입니다.
+     """
+    @swagger_auto_schema(responses=check_duplicate_schema_dict)
+    def get(self, request):
+        try:
+            user = User.objects.get(username=request.GET['username'])
+        except Exception as e:
+            user = None
+
+        return Response({
+            'data' : "not exist" if user is None else "exist"
+        },status=status.HTTP_200_OK)
+
+
+@permission_classes([])
+@authentication_classes([])
+class CheckEmail(generics.GenericAPIView):
+    """
+        Email 중복체크 [GET]
+        ---
+        # URL
+            - POST /accounts/checkemail/?email=kuku@naver.com
+        ---
+        # Response
+            - "data" : "exist" -> 존재하는 email 입니다.
+            - "data" : "not exist" -> 사용가능한 email 입니다.
+     """
+    @swagger_auto_schema(responses=check_duplicate_schema_dict)
+    def get(self, request):
+        try:
+            user = User.objects.get(email=request.GET['email'])
+        except Exception as e:
+            user = None
+        return Response({
+            'data' : "not exist" if user is None else "exist"
+        },status=status.HTTP_200_OK)
+
+@permission_classes([])
+@authentication_classes([])
+class CheckNickname(generics.GenericAPIView):
+    """
+        Nickname 중복체크 [GET]
+        ---
+        # URL
+            - POST /accounts/checknickname/?nickname=kuku
+        # Response
+            - "data" : "exist" -> 존재하는 Nickname 입니다.
+            - "data" : "not exist" -> 사용가능한 Nickname 입니다.
+     """
+    @swagger_auto_schema(responses=check_duplicate_schema_dict)
+    def get(self, request):
+        try:
+            user = User.objects.get(nickname=request.GET['nickname'])
+        except Exception as e:
+            user = None
+        return Response({
+            'data' : "not exist" if user is None else "exist"
+        },status=status.HTTP_200_OK)
