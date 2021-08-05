@@ -68,11 +68,14 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
         user_id = request.user.id
         event_id = data['event_id']
         event = Event.objects.get(id=event_id)
-        SubscribeEvent.objects.create(user=User.objects.get(id=user_id),
-                                      event=event)
-        brand = Brand.objects.filter(id=event.brand.id)
-        brand.update(view=brand[0].view + 1)
-        return JsonResponse({"message": "이벤트 좋아요 성공"}, status=200)
+        try:
+            SubscribeEvent.objects.get(user=User.objects.get(id=user_id),event=event)
+            return JsonResponse({"message": "이미 좋아요 한 이벤트입니다."}, status=200)
+        except Exception as e:
+            SubscribeEvent.objects.create(user=User.objects.get(id=user_id),event=event)
+            brand = Brand.objects.filter(id=event.brand.id)
+            brand.update(view=brand[0].view + 1)
+            return JsonResponse({"message": "이벤트 좋아요 성공"}, status=200)
 
     response_schema_dict2 = {
         "200": openapi.Response(
