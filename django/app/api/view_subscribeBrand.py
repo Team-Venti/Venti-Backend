@@ -135,7 +135,7 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
 class BrandLike(APIView):
     response_schema_dict3 = {
         "200": openapi.Response(
-            description="회원가입 선호브랜드때 브랜드 구독하는 API",
+            description="브랜드 구독하는 API",
             examples={
                 "application/json": {
                     "message": "브랜드 구독 성공"
@@ -153,10 +153,10 @@ class BrandLike(APIView):
     ), responses=response_schema_dict3)
     def post(self, request, format=None):
         """
-            회원가입 선호브랜드 할때 브랜드 구독하는 API
+            브랜드 구독하는 API
 
             # header
-                - 이건 토큰 아니고.. 기본 로그인으로 되나? 고민
+                - Authorization : jwt ey93..... [jwt token]
             # URL
                 - POST /api/guest/mybrands/
 
