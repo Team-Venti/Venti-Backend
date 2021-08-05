@@ -14,6 +14,7 @@ class User(AbstractUser, DateInfo):
     birth = models.DateField(null=True)
     gender = models.CharField(max_length=10, blank=True)  # male / female
     nickname = models.CharField(max_length=20, unique=True)
+    noti_state = models.BooleanField(default=False)
 
 
 class Category(DateInfo):
