@@ -204,8 +204,8 @@ class BrandDetail(APIView):
         # brand = brands.values()
         # brand_list = []
         brand = brands.values()[0]
-        brand['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['image'])
-        brand['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['banner_image'])
+        brand['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(brand['image'])
+        brand['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(brand['banner_image'])
 
         return JsonResponse({'brand': brand}, status=200)
 
