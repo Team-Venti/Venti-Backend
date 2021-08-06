@@ -163,9 +163,11 @@ class BrandLike(APIView):
         data = JSONParser().parse(request)
         user_id = request.user.id
         brand_id = data['brand_id']
-        try:
-            SubscribeBrand.objects.get(user=User.objects.get(id=user_id), brand=Brand.objects.get(id=brand_id))
-            return JsonResponse({"message": "이미 구독한 브랜드입니다."}, status=200)
-        except Exception as e:
-            SubscribeBrand.objects.create(user=User.objects.get(id=user_id), brand=Brand.objects.get(id=brand_id))
-            return JsonResponse({'message': "브랜드 구독 성공"}, status=200)
+        for i in brand_id:
+            try:
+                SubscribeBrand.objects.get(user=User.objects.get(id=user_id), brand=Brand.objects.get(id=i))
+                # return JsonResponse({"message": "이미 구독한 브랜드입니다."}, status=200)
+            except Exception as e:
+                SubscribeBrand.objects.create(user=User.objects.get(id=user_id), brand=Brand.objects.get(id=i))
+        return JsonResponse({'message': "브랜드 구독 성공"}, status=200)
+

@@ -157,21 +157,43 @@ class Registration(generics.GenericAPIView):
         responses = register_response_schema_dict)
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if not serializer.is_valid(raise_exception=True):
-            return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
-
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save(request)  # request 필요 -> 오류 발생
-        return Response(
-            {
-                # get_serializer_context: serializer에 포함되어야 할 어떠한 정보의 context를 딕셔너리 형태로 리턴
-                # 디폴트 정보 context는 request, view, format
-                "user": UserSerializer(
-                    user, context=self.get_serializer_context()
-                ).data
-            },
-            status=status.HTTP_201_CREATED,
-        )
+        try :
+            if not serializer.is_valid(raise_exception=True):
+                return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.save(request)  # request 필요 -> 오류 발생
+            return Response(
+                {
+                    # get_serializer_context: serializer에 포함되어야 할 어떠한 정보의 context를 딕셔너리 형태로 리턴
+                    # 디폴트 정보 context는 request, view, format
+                    "user": UserSerializer(
+                        user, context=self.get_serializer_context()
+                    ).data
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            error = str(e)
+            error_msg = ""
+            if "password_too_common" in error:
+                error_msg = error_msg + "비밀번호가 너무 일상적입니다.\n"
+            if "password_entirely_numeric" in error:
+                error_msg = error_msg + "비밀번호가 전부 숫자로 되어 있습니다.\n"
+            if "해당 사용자 이름은 이미 존재합니다" in error:
+                error_msg = error_msg + "해당 id는 이미 존재합니다.\n"
+            if "api_user_nickname_" in error:
+                error_msg = error_msg + "해당 nickname는 이미 존재합니다.\n"
+            if "유효한 이메일 주소를 입력하십시오" in error:
+                error_msg = error_msg + "유효한 이메일 주소를 입력하십시오.\n"
+            if "required" in error:
+                error_msg = error_msg + "필수 항목을 모두 입력해주세요.\n"
+            return Response(
+                {
+                    "error_origin" : str(e),
+                    "error" : str(error_msg)
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 # 회원 정보 수정

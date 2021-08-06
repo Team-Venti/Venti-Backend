@@ -106,6 +106,8 @@ class NotificationUser(APIView):
             else:
                 i['noti_time'] = str((now - i['created_date']).seconds // 3600) + '시간 전'
             result.append(i)
-        request.user.noti_state = False
+
+        user = User.objects.filter(id=request.user.id)
+        user.update(noti_state=False)
         return JsonResponse({'result': result}, status=200)
 

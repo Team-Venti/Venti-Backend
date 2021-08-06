@@ -88,6 +88,8 @@ class GuestSearch(APIView):
         unique = { each['name'] : each for each in events }.values()
         event_list = []
         for each_event in unique:
+            brand_name = Brand.objects.filter(id=each_event['brand_id'])
+            each_event['brand_name'] = brand_name[0].name
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             event_list.append(each_event)
 
@@ -192,6 +194,8 @@ class Search(APIView):
         unique = { each['name'] : each for each in events }.values()
         event_list =[]
         for each_event in unique:
+            brand_name = Brand.objects.filter(id=each_event['brand_id'])
+            each_event['brand_name'] = brand_name[0].name
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             event_list.append(each_event)
         return Response({

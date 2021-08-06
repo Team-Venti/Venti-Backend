@@ -70,5 +70,11 @@ class Weekly(APIView):
 
         """
         hot_brand = Brand.objects.all().order_by('-view')
-        result = hot_brand.values()
-        return JsonResponse({'result': list(result)}, status=200)
+        results = hot_brand.values()
+        result_list = []
+        for result in results :
+            result['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(result['image'])
+            result['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(result['banner_image'])
+            result_list.append(result)
+
+        return JsonResponse({'result': result_list}, status=200)
