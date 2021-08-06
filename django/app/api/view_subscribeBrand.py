@@ -109,7 +109,6 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'user_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int'),
             'brand_id': openapi.Schema(type=openapi.TYPE_NUMBER, description='int')
         }
     ), responses=response_schema_dict1)
@@ -125,7 +124,7 @@ class SubscribeBrandViewSet(viewsets.ModelViewSet):
 
         """
         data = JSONParser().parse(request)
-        user_id = data['user_id']
+        user_id = request.user.id
         brand_id = data['brand_id']
         subscribe = SubscribeBrand.objects.filter(user=user_id, brand=brand_id)
         subscribe.delete()
