@@ -259,25 +259,28 @@ class EventViewSet(viewsets.ModelViewSet):
                     event[-1]['d-day'] = (ev.due - now).days
         else:
             for i in brand_name:
-                br = Brand.objects.get(name=i)
-                events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
-                for each_event in events.values():
-                    ev = Event.objects.get(id=each_event['id'])
-                    each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
-                    for each_sub in subscribes:
-                        if each_sub.event.id == each_event['id']:
+                try:
+                    br = Brand.objects.get(name=i)
+                    events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
+                    for each_event in events.values():
+                        ev = Event.objects.get(id=each_event['id'])
+                        each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
+                        for each_sub in subscribes:
+                            if each_sub.event.id == each_event['id']:
+                                brand = Brand.objects.get(id=each_event['brand_id'])
+                                event.append(each_event)
+                                event[-1]['brand_name'] = brand.name
+                                event[-1]['subs'] = True
+                                event[-1]['d-day'] = (ev.due - now).days
+                                break
+                        else:
                             brand = Brand.objects.get(id=each_event['brand_id'])
                             event.append(each_event)
                             event[-1]['brand_name'] = brand.name
-                            event[-1]['subs'] = True
+                            event[-1]['subs'] = False
                             event[-1]['d-day'] = (ev.due - now).days
-                            break
-                    else:
-                        brand = Brand.objects.get(id=each_event['brand_id'])
-                        event.append(each_event)
-                        event[-1]['brand_name'] = brand.name
-                        event[-1]['subs'] = False
-                        event[-1]['d-day'] = (ev.due - now).days
+                except Exception as e:
+                    continue
 
         return JsonResponse({'event': event}, status=200)
 
