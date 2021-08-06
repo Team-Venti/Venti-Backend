@@ -1,4 +1,8 @@
+# coding=utf-8
 from django.contrib import admin
+from background_task import background
+from .models import *
+from datetime import datetime, timedelta
 
 # Register your models here.
 from .models import User, Brand, Event, Category, SubscribeBrand, SubscribeEvent, Notification
@@ -37,7 +41,7 @@ class EventAdmin(admin.ModelAdmin):
             for j in subscribe:
                 user = User.objects.filter(id=j.user.id)
                 user.update(noti_state=True)
-                Notification.objects.create(user=User.objects.get(id=j.user.id),brand=i.brand.id, event=Event.objects.get(name=i.name), notice_type="new")
+                Notification.objects.create(user=User.objects.get(id=j.user.id),brand=i.brand, event=Event.objects.get(name=i.name), notice_type="new")
 
     make_notification.short_description = '지정 이벤트의 알림 전송'
 
@@ -62,5 +66,50 @@ class SubscribeEventAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'event', 'notice_type', 'brand']
+    list_display = ['id', 'user','event', 'notice_type', 'brand']
     list_display_links = ['id', 'user']
+    actions = ['noti']
+
+    def noti(self, request, queryset):
+        noti_bg(repeat=3600)
+
+    noti.short_description = '마감알람 시작하기'
+
+
+@background(schedule=3600)
+def noti_bg():
+    # 현재 시간 가져오기
+    now = datetime.now().strftime('%Y-%m-%d %h:%m:%s')
+    # 12시간 전
+    now12 = datetime.now() + timedelta(hours=12)
+    now24 = datetime.now() + timedelta(hours=24)
+    now48 = datetime.now() + timedelta(hours=48)
+    # 12시간 전 이벤트들
+    endevent12 = Event.objects.filter(due__gte=(now12 - timedelta(minutes=30)), due__lte=(now12 + timedelta(minutes=29)))
+    endevent24 = Event.objects.filter(due__gte=(now24 - timedelta(minutes=30)), due__lte=(now24 + timedelta(minutes=29)))
+    endevent48 = Event.objects.filter(due__gte=(now48 - timedelta(minutes=30)), due__lte=(now48 + timedelta(minutes=29)))
+
+    # 이 이벤트를 좋아하는 유저 찾기
+    if endevent12.count() != 0:
+        for i in endevent12:
+            likeevents = SubscribeEvent.objects.filter(event=i.id)
+            for j in likeevents:
+                user = User.objects.filter(id=j.user.id)
+                user.update(noti_state=True)
+                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end12")
+    # 이 이벤트를 좋아하는 유저 찾기
+    if endevent24.count() != 0:
+        for i in endevent24:
+            likeevents = SubscribeEvent.objects.filter(event=i.id)
+            for j in likeevents:
+                user = User.objects.filter(id=j.user.id)
+                user.update(noti_state=True)
+                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end24")
+    # 이 이벤트를 좋아하는 유저 찾기
+    if endevent48.count() != 0:
+        for i in endevent48:
+            likeevents = SubscribeEvent.objects.filter(event=i.id)
+            for j in likeevents:
+                user = User.objects.filter(id=j.user.id)
+                user.update(noti_state=True)
+                Notification.objects.create(user=j.user, event=i, brand=i.brand, notice_type="end48")

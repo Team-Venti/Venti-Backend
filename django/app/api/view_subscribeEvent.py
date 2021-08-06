@@ -120,11 +120,27 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
             description="마이 벤티의 모든 좋아요 목록과 진행/마감 정보를 제공하는 API",
             examples={
                 "application/json": {
-                     "on_event": [
+                    "on_event": [
+                        {
+                            "id": 5,
+                            "created_date": "2021-08-06T01:56:34.834",
+                            "update_date": "2021-08-06T02:00:34.518",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "마감알람테스트",
+                            "image": "event_logo/스타벅스배너_DCrT90J.png",
+                            "text": "ㅇㅇ",
+                            "due": "2021-08-06T14:01:23",
+                            "view": 0,
+                            "url": "https://www.burgerking.co.kr/#/eventDetail/487",
+                            "brand_name": "aa",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/스타벅스배너_DCrT90J.png",
+                            "d-day": 0
+                        },
                         {
                             "id": 3,
-                            "created_date": "2021-08-04",
-                            "update_date": "2021-08-04",
+                            "created_date": "2021-08-04T00:00:00",
+                            "update_date": "2021-08-04T00:00:00",
                             "category_id": 1,
                             "brand_id": 2,
                             "name": "bblike",
@@ -133,13 +149,30 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
                             "due": "2021-08-07T10:28:38",
                             "view": 0,
                             "url": "https://www.hollys.co.kr/news/event/view.do?idx=263&pageNo=1&division=",
+                            "brand_name": "bb",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/스타벅스배너.png",
                             "d-day": 1
                         },
                         {
+                            "id": 2,
+                            "created_date": "2021-08-04T00:00:00",
+                            "update_date": "2021-08-04T00:00:00",
+                            "category_id": 1,
+                            "brand_id": 1,
+                            "name": "aaunlike",
+                            "image": "event_logo/버거킹.png",
+                            "text": "dd",
+                            "due": "2021-08-07T10:28:05",
+                            "view": 1,
+                            "url": "http://event.com",
+                            "brand_name": "aa",
+                            "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
+                            "d-day": 1
+                        },
+                        {
                             "id": 1,
-                            "created_date": "2021-08-04",
-                            "update_date": "2021-08-04",
+                            "created_date": "2021-08-04T00:00:00",
+                            "update_date": "2021-08-04T00:00:00",
                             "category_id": 1,
                             "brand_id": 1,
                             "name": "aalike",
@@ -148,12 +181,14 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
                             "due": "2021-08-07T10:27:49",
                             "view": 2,
                             "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
+                            "brand_name": "aa",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
                             "d-day": 1
                         }
                     ],
                     "off_event": []
                 }
+
             }
         )
     }
@@ -184,6 +219,8 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
 
         onevent = []
         for each_event in on_event.values():
+            brand = Brand.objects.get(id=each_event['brand_id'])
+            each_event['brand_name'] = brand.name
             ev = Event.objects.get(id=each_event['id'])
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             onevent.append(each_event)
@@ -191,6 +228,8 @@ class SubscribeEventViewSet(viewsets.ModelViewSet):
 
         offevent = []
         for each_event in off_event.values():
+            brand = Brand.objects.get(id=each_event['brand_id'])
+            each_event['brand_name'] = brand.name
             ev = Event.objects.get(id=each_event['id'])
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
             offevent.append(each_event)
