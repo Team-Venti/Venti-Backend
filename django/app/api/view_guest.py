@@ -201,13 +201,13 @@ class BrandDetail(APIView):
         data = JSONParser().parse(request)
         brand_id = data['brand_id']
         brands = Brand.objects.filter(id=brand_id)
-        brand = brands.values()
-        brand_list = []
-        for i in brand:
-            i['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['image'])
-            i['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['banner_image'])
-            brand_list.append(i)
-        return JsonResponse({'brand': brand_list}, status=200)
+        # brand = brands.values()
+        # brand_list = []
+        brand = brands.values()[0]
+        brand['brand_logo_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['image'])
+        brand['brand_banner_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i['banner_image'])
+
+        return JsonResponse({'brand': brand}, status=200)
 
 
 @permission_classes([AllowAny])
