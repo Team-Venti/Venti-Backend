@@ -32,8 +32,8 @@ response_schema_dict = {
                 "event": [
                     {
                         "id": 1,
-                        "created_date": "2021-08-04",
-                        "update_date": "2021-08-04",
+                        "created_date": "2021-08-04T00:00:00",
+                        "update_date": "2021-08-04T00:00:00",
                         "category_id": 1,
                         "brand_id": 1,
                         "name": "aalike",
@@ -44,12 +44,13 @@ response_schema_dict = {
                         "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
                         "brand_name": "aa",
                         "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
-                        "subs": 'true'
+                        "d-day": 1,
+                        "subs": "true"
                     },
                     {
                         "id": 2,
-                        "created_date": "2021-08-04",
-                        "update_date": "2021-08-04",
+                        "created_date": "2021-08-04T00:00:00",
+                        "update_date": "2021-08-04T00:00:00",
                         "category_id": 1,
                         "brand_id": 1,
                         "name": "aaunlike",
@@ -60,39 +61,8 @@ response_schema_dict = {
                         "url": "http://event.com",
                         "brand_name": "aa",
                         "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹.png",
-                        "subs": "false"
-                    },
-                    {
-                        "id": 3,
-                        "created_date": "2021-08-04",
-                        "update_date": "2021-08-04",
-                        "category_id": 1,
-                        "brand_id": 2,
-                        "name": "bblike",
-                        "image": "event_logo/스타벅스배너.png",
-                        "text": "ddd",
-                        "due": "2021-08-07T10:28:38",
-                        "view": 0,
-                        "url": "https://www.hollys.co.kr/news/event/view.do?idx=263&pageNo=1&division=",
-                        "brand_name": "bb",
-                        "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/스타벅스배너.png",
+                        "d-day": 1,
                         "subs": "true"
-                    },
-                    {
-                        "id": 4,
-                        "created_date": "2021-08-04",
-                        "update_date": "2021-08-04",
-                        "category_id": 1,
-                        "brand_id": 2,
-                        "name": "bbunlike",
-                        "image": "event_logo/스타벅스배너_wxNVCEc.png",
-                        "text": "ss",
-                        "due": "2021-08-07T10:28:56",
-                        "view": 0,
-                        "url": "http://a.com",
-                        "brand_name": "bb",
-                        "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/스타벅스배너_wxNVCEc.png",
-                        "subs": "false"
                     }
                 ]
             }
@@ -139,6 +109,7 @@ class EventforyouView(APIView):
             for j in eventforyou.values() :
                 j['brand_name'] = brandname
                 j['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/'+str(j['image'])
+                j['d-day'] = (j["due"] - now).days
                 if j['id'] in subevents:
                     j['subs'] = True
                 else:
