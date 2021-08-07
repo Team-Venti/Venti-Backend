@@ -299,7 +299,7 @@ class EventViewSet(viewsets.ModelViewSet):
                             "name": "aalike",
                             "image": "event_logo/버거킹배너.jpeg",
                             "text": "dd",
-                            "due": "2021-08-07T10:27:49",
+                            "due": "2021-08-07",
                             "view": 2,
                             "url": "https://magazine.musinsa.com/index.php?m=news&cat=EVENT&uid=47461",
                             "event_img_url": "https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/event_logo/버거킹배너.jpeg",
@@ -338,18 +338,21 @@ class EventViewSet(viewsets.ModelViewSet):
         event = []
         for each_event in events.values():
             each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
+            ev = Event.objects.get(id=each_event['id'])
             for each_sub in subscribes:
                 if each_sub.event.id == each_event['id']:
                     brand = Brand.objects.get(id=each_event['brand_id'])
                     event.append(each_event)
                     event[-1]['brand_name'] = brand.name
                     event[-1]['subs'] = True
+                    event[-1]['due'] = ev.due.strftime("%Y-%m-%d")
                     break
             else:
                 brand = Brand.objects.get(id=each_event['brand_id'])
                 event.append(each_event)
                 event[-1]['brand_name'] = brand.name
                 event[-1]['subs'] = False
+                event[-1]['due'] = ev.due.strftime("%Y-%m-%d")
 
         return JsonResponse({'event': event}, status=200)
 
