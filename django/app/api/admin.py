@@ -25,8 +25,15 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'category']
+    list_display = ['id', 'name', 'category', 'view']
     list_display_links = ['id', 'name']
+    actions = ['make_banner']
+
+    def make_banner(self, request, queryset):
+        for each in queryset:
+            Banner.objects.create(name=each.name, brand_id=each.id, view=each.view)
+
+    make_banner.short_description = '지정 브랜드 배너 생성'
 
 
 @admin.register(Event)
@@ -41,7 +48,7 @@ class EventAdmin(admin.ModelAdmin):
             for j in subscribe:
                 user = User.objects.filter(id=j.user.id)
                 user.update(noti_state=True)
-                Notification.objects.create(user=User.objects.get(id=j.user.id),brand=i.brand, event=Event.objects.get(name=i.name), notice_type="new")
+                Notification.objects.create(user=User.objects.get(id=j.user.id), brand=i.brand, event=Event.objects.get(name=i.name), notice_type="new")
 
     make_notification.short_description = '지정 이벤트의 알림 전송'
 
@@ -66,7 +73,7 @@ class SubscribeEventAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user','event', 'notice_type', 'brand']
+    list_display = ['id', 'user', 'event', 'notice_type', 'brand']
     list_display_links = ['id', 'user']
     actions = ['noti']
 
@@ -74,6 +81,12 @@ class NotificationAdmin(admin.ModelAdmin):
         noti_bg(repeat=3600)
 
     noti.short_description = '마감알람 시작하기'
+
+
+@admin.register(Banner)
+class BannerAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'brand_id', 'view']
+    list_display_links = ['id', 'name']
 
 
 @background(schedule=3600)
