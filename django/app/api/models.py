@@ -74,3 +74,10 @@ class SubscribeEvent(DateInfo):
 
     def __str__(self):
         return str(self.user.username) + "의 " + str(self.event) + " 이벤트 좋아요"
+
+
+class Banner(DateInfo):
+    name = models.CharField(max_length=50)
+    brand_id = models.IntegerField()
+    view = models.IntegerField(default=0)
+

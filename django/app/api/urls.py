@@ -16,7 +16,7 @@ from .view_subscribeEvent import SubscribeEventViewSet
 from .view_subscribeBrand import SubscribeBrandViewSet, BrandLike
 from .views_search import Search, GuestSearch
 from .view_eventforyou import EventforyouView
-from .view_weekly import Weekly
+from .view_weekly import Weekly, BannerWeekly
 from .view_notification import *
 from .view_guest import BrandMain, BrandDetail, EventMain, EventDetail, EventDeadline, BrandList
 # 추가
@@ -46,7 +46,8 @@ urlpatterns = [
     # path('noti/', view_notification.noti),
     path('guest/search/', GuestSearch.as_view()),
     path('search/', Search.as_view()),
-    path('weekly/', Weekly.as_view()),
+    path('weekly/', BannerWeekly.as_view()),
+    # path('weekly/', Weekly.as_view()), 배너 실시간 일때!
     path('eventforyou/', EventforyouView.as_view(),name = "eventforyou"),
     path('guest/brand_list/', BrandList.as_view()),
     path('guest/brand_main/', BrandMain.as_view()),
