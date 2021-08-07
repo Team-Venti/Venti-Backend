@@ -296,15 +296,18 @@ class EventMain(APIView):
                 event[-1]['d-day'] = (ev.due - now).days
         else:
             for i in brand_name:
-                br = Brand.objects.get(name=i)
-                events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
-                for each in events.values():
-                    each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
-                    brand = Brand.objects.get(id=each['brand_id'])
-                    ev = Event.objects.get(id=each['id'])
-                    event.append(each)
-                    event[-1]['brand_name'] = brand.name
-                    event[-1]['d-day'] = (ev.due - now).days
+                try:
+                    br = Brand.objects.get(name=i)
+                    events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
+                    for each in events.values():
+                        each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
+                        brand = Brand.objects.get(id=each['brand_id'])
+                        ev = Event.objects.get(id=each['id'])
+                        event.append(each)
+                        event[-1]['brand_name'] = brand.name
+                        event[-1]['d-day'] = (ev.due - now).days
+                except Exception as e:
+                    continue
 
         return JsonResponse({'event': event}, status=200)
 
