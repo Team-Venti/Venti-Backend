@@ -1,50 +1,104 @@
+# Backend 정리
 
-## Docker Prerequisites:
-- Windows
-https://docs.docker.com/docker-for-windows/install/
-- Mac
-https://docs.docker.com/docker-for-mac/install/
+# VENTI
 
-# Let’s run the API using docker
-## Let’s build the docker image
-```
-docker-compose build
+## 프로젝트 설명
+
+<img src="/img/project_detail.png"></img>
+
+**이벤트 및 할인 정보 모음 플랫폼**
+
+## 핵심 기능
+
+<img src="/img/func1.png"></img>
+
+<img src="/img/func2.png"></img>
+
+<img src="/img/func3.png"></img>
+
+- 필터링
+
+    33개의 브랜드와 200개에 달하는 이벤트 중 원하는 브랜드와 이벤트만 골라볼 수 있습니다. 
+
+- 당신을 위한 이벤트
+
+    당신이 좋아할 이벤트를 벤티에서 추천해드려요.
+
+- 알림
+
+    구독한 브랜드들의 알림을 받아보세요!
+
+    새로 이벤트가 등록될 때, 좋아한 이벤트가 마감되기 전 알람이 발송됩니다. 
+
+## Architecture
+
+<img src="/img/architecture.png"></img>
+
+- Django
+
+    > 파이썬으로 작성된 오픈 소스 웹 프레임워크
+
+- Docker
+
+    > 리눅스의 응용 프로그램들을 프로세스 격리 기술들을 사용해 컨테이너로 실행하고 관리하는 오픈 소스 프로젝트
+
+- Database
+
+    **배포 전** : 
+    - MySQL
+
+    **배포 후** :
+    - Amazon RDS
+      : User 정보, 이벤트, 브랜드 정보 저장
+    - Amazon S3 
+      : 이미지 저장
+
+     
+
+- CI
+
+    > - Travis + Github + Docker hub
+      : github 업로드 시 Image Build 후 Docker hub에 자동 업로드
+
+- Deploy
+
+    > - AWS EC2
+
+- Frontend(레포 연결)
+
+## ERD
+
+<img src="/img/erd.png"></img>
+
+## Package
+
+```jsx
+Django==3.1.4
+django-allauth==0.45.0
+django-cors-headers
+django-filter==2.4.0
+django-rest-auth==0.9.5
+djangorestframework==3.12.4
+djangorestframework-jwt==1.11.0
+drf-yasg==1.20.0
+gunicorn==20.0.4
+jsonify==0.5
+oauthlib==3.1.1
+packaging==21.0
+Pillow==8.3.1
+PyJWT==1.7.1
+PyMySQL==1.0.2
+pyparsing==2.4.7
+requests-oauthlib==1.3.0
+sqlparse==0.4.1
+boto3
+django-storages
 ```
 
-## Docker compose up with all associated docker compose services
-```
-$ docker-compose up
-```
-#### Note:
-If you prefer to use a daemon mode, Let’s run the above command in the background:
-```
-$ docker-compose up -d
-```
+## Contact Us
 
-### 4. Django Python application
-```
-http://localhost:8000
-```
+김현진 - ~~개발
 
-#### If you want to build/run a specific application
-> ```
-> docker-compose build <custom service>
-> docker-compose run <custom service>
-> 
-> i.e. 
-> docker-compose build nodejs_app
-> docker-compose run nodejs_app
-> ```
+@github.io/gimkuku
 
----
-
-
-### MySQL
-https://www.mysql.com/products/workbench/
-```
-mysql -h localhost -p 3306 -u root -p1234
-ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)
-
-But, you may not be able to connect via command line.
-Please use workbench
-```
+[이준기](https://github.com/Jun-k0) - 뭐뭐했다
