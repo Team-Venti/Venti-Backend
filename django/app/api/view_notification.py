@@ -101,10 +101,14 @@ class NotificationUser(APIView):
                 i['d-day'] = 1
             if i['notice_type'] == "end48":
                 i['d-day'] = 2
-            if(now - i['created_date']).seconds // 3600 == 0:
-                i['noti_time'] = str((now - i['created_date']).seconds//60)+'분 전'
-            else:
-                i['noti_time'] = str((now - i['created_date']).seconds // 3600) + '시간 전'
+
+            if (now - i['created_date']).days == 0 :
+                if(now - i['created_date']).seconds < 3600 :
+                    i['noti_time'] = str((now - i['created_date']).seconds//60)+'분 전'
+                else:
+                    i['noti_time'] = str((now - i['created_date']).seconds // 3600) + '시간 전'
+            else :
+                i['noti_time'] = str((now - i['created_date']).days) + '일 전'
             result.append(i)
 
         user = User.objects.filter(id=request.user.id)
