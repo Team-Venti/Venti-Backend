@@ -152,12 +152,17 @@ class PaginationTest1(APIView):
         data = JSONParser().parse(request)
         category_id = data['category_id']
         brand_name = data['brand_name']
-        page = request.GET['page']
-        slice = 2
-        size = int(page) * slice
+        try:
+            page = request.GET['page']
+        except:
+            page = 1
         now = datetime.datetime.now()
         event = []
         result = []
+        slice = 4  # 페이지마다 짜를 갯수
+        default_slice = 10  # page=1 일때 디폴트 갯수
+        size = (int(page) - 1) * slice
+        next_page = 0
         if len(brand_name) == 0:
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each in events.values():
@@ -167,14 +172,21 @@ class PaginationTest1(APIView):
                 event.append(each)
                 event[-1]['brand_name'] = brand.name
                 event[-1]['d-day'] = (ev.due - now).days
-                if len(events) <= size:
-                    event[-1]['next_page'] = -1
-                else:
-                    event[-1]['next_page'] = int(page) + 1
-            for i in range((int(page)-1) * slice, size):
-                if len(event) <= i:
-                    return JsonResponse({'event': result}, status=200)
-                result.append(event[i])
+            # 페이지네이션 next_page 설정
+            if len(event) <= default_slice + size:
+                next_page = -1
+            else:
+                next_page = int(page) + 1
+            if int(page) == 1:
+                for i in range(0, default_slice):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
+            else:
+                for i in range(default_slice + (int(page) - 2) * slice, default_slice + size):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
 
         else:
             for i in brand_name:
@@ -187,16 +199,23 @@ class PaginationTest1(APIView):
                     event.append(each)
                     event[-1]['brand_name'] = brand.name
                     event[-1]['d-day'] = (ev.due - now).days
-                    if len(events) <= size:
-                        event[-1]['next_page'] = -1
-                    else:
-                        event[-1]['next_page'] = int(page) + 1
-            for i in range((int(page) - 1) * slice, size):
-                if len(event) <= i:
-                    return JsonResponse({'event': result}, status=200)
-                result.append(event[i])
+            # 페이지네이션 next_page 설정
+            if len(event) <= default_slice + size:
+                next_page = -1
+            else:
+                next_page = int(page) + 1
+            if int(page) == 1:
+                for i in range(0, default_slice):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
+            else:
+                for i in range(default_slice + (int(page) - 2) * slice, default_slice + size):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
 
-        return JsonResponse({'event': result}, status=200)
+        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
 
 class PaginationTest2(APIView):
     # 회원 event
@@ -208,10 +227,15 @@ class PaginationTest2(APIView):
         subscribes = SubscribeEvent.objects.filter(user=user_id)
         now = datetime.datetime.now()
         event = []
-        page = request.GET['page']
-        slice = 2
-        size = int(page) * slice
+        try:
+            page = request.GET['page']
+        except:
+            page = 1
+        slice = 4   # 페이지마다 짜를 갯수
+        default_slice = 10  # page=1 일때 디폴트 갯수
+        size = (int(page) - 1) * slice
         result = []
+        next_page = 0
         if len(brand_name) == 0:
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each_event in events.values():
@@ -232,10 +256,21 @@ class PaginationTest2(APIView):
                     event[-1]['brand_name'] = brand.name
                     event[-1]['subs'] = False
                     event[-1]['d-day'] = (ev.due - now).days
-            for i in range((int(page) - 1) * slice, size):
-                if len(event) <= i:
-                    return JsonResponse({'event': result}, status=200)
-                result.append(event[i])
+            # 페이지네이션 next_page 설정
+            if len(event) <= default_slice + size:
+                next_page = -1
+            else:
+                next_page = int(page) + 1
+            if int(page) == 1:
+                for i in range(0, default_slice):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
+            else:
+                for i in range(default_slice + (int(page) - 2) * slice, default_slice + size):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
 
         else:
             for i in brand_name:
@@ -261,9 +296,20 @@ class PaginationTest2(APIView):
                             event[-1]['d-day'] = (ev.due - now).days
                 except Exception as e:
                     continue
-            for i in range((int(page) - 1) * slice, size):
-                if len(event) <= i:
-                    return JsonResponse({'event': result}, status=200)
-                result.append(event[i])
+            # 페이지네이션 next_page 설정
+            if len(event) <= size:
+                next_page = -1
+            else:
+                next_page = int(page) + 1
+            if int(page) == 1:
+                for i in range(0, default_slice):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
+            else:
+                for i in range((int(page) - 1) * slice, size):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
 
-        return JsonResponse({'event': result}, status=200)
+        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
