@@ -69,8 +69,8 @@ class GuestSearch(APIView):
         """
         name = request.GET['search']
         now = datetime.datetime.now()
-        event = Event.objects.filter(name__contains=name, due__gt=now)
-        brand = Brand.objects.filter(name__contains=name)
+        event = Event.objects.filter(name__icontains=name, due__gt=now)
+        brand = Brand.objects.filter(name__icontains=name)
         events = []
         for i in event.values():
             ev = Event.objects.get(id=i['id'])
