@@ -283,8 +283,17 @@ class EventMain(APIView):
         data = JSONParser().parse(request)
         category_id = data['category_id']
         brand_name = data['brand_name']
+        try:
+            page = request.GET['page']
+        except:
+            page = 1
         now = datetime.datetime.now()
         event = []
+        result = []
+        slice = 4  # 페이지마다 짜를 갯수
+        default_slice = 10  # page=1 일때 디폴트 갯수
+        size = (int(page) - 1) * slice
+        next_page = 0
         if len(brand_name) == 0:
             events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
             for each in events.values():
@@ -294,22 +303,50 @@ class EventMain(APIView):
                 event.append(each)
                 event[-1]['brand_name'] = brand.name
                 event[-1]['d-day'] = (ev.due - now).days
+            # 페이지네이션 next_page 설정
+            if len(event) <= default_slice + size:
+                next_page = -1
+            else:
+                next_page = int(page) + 1
+            if int(page) == 1:
+                for i in range(0, default_slice):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
+            else:
+                for i in range(default_slice + (int(page) - 2) * slice, default_slice + size):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
+
         else:
             for i in brand_name:
-                try:
-                    br = Brand.objects.get(name=i)
-                    events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
-                    for each in events.values():
-                        each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
-                        brand = Brand.objects.get(id=each['brand_id'])
-                        ev = Event.objects.get(id=each['id'])
-                        event.append(each)
-                        event[-1]['brand_name'] = brand.name
-                        event[-1]['d-day'] = (ev.due - now).days
-                except Exception as e:
-                    continue
+                br = Brand.objects.get(name=i)
+                events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
+                for each in events.values():
+                    each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
+                    brand = Brand.objects.get(id=each['brand_id'])
+                    ev = Event.objects.get(id=each['id'])
+                    event.append(each)
+                    event[-1]['brand_name'] = brand.name
+                    event[-1]['d-day'] = (ev.due - now).days
+            # 페이지네이션 next_page 설정
+            if len(event) <= default_slice + size:
+                next_page = -1
+            else:
+                next_page = int(page) + 1
+            if int(page) == 1:
+                for i in range(0, default_slice):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
+            else:
+                for i in range(default_slice + (int(page) - 2) * slice, default_slice + size):
+                    if len(event) <= i:
+                        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
+                    result.append(event[i])
 
-        return JsonResponse({'event': event}, status=200)
+        return JsonResponse({'event': result, 'next_page': next_page}, status=200)
 
 
 @permission_classes([AllowAny])
