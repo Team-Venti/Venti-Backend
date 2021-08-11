@@ -1,11 +1,13 @@
 # coding=utf-8
 from django.http import JsonResponse
 from rest_framework.decorators import permission_classes
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
-from .models import Event, Brand, Banner
+from .models import Event, Brand, Banner, SubscribeEvent
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+import datetime
 
 response_schema_dict = {
     "200": openapi.Response(
@@ -142,3 +144,126 @@ class BannerWeekly(APIView):
             result.append(each)
 
         return JsonResponse({'result': result}, status=200)
+
+@permission_classes([AllowAny])
+# guest eventforyou, event
+class PagenationTest1(APIView):
+    def post(self, request):
+        data = JSONParser().parse(request)
+        category_id = data['category_id']
+        brand_name = data['brand_name']
+        page = request.GET['page']
+        slice = 2
+        size = int(page) * slice
+        now = datetime.datetime.now()
+        event = []
+        result = []
+        if len(brand_name) == 0:
+            events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
+            for each in events.values():
+                each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
+                brand = Brand.objects.get(id=each['brand_id'])
+                ev = Event.objects.get(id=each['id'])
+                event.append(each)
+                event[-1]['brand_name'] = brand.name
+                event[-1]['d-day'] = (ev.due - now).days
+                if len(events) <= size:
+                    event[-1]['next_page'] = -1
+                else:
+                    event[-1]['next_page'] = int(page) + 1
+            for i in range((int(page)-1) * slice, size):
+                if len(event) <= i:
+                    return JsonResponse({'event': result}, status=200)
+                result.append(event[i])
+
+        else:
+            for i in brand_name:
+                br = Brand.objects.get(name=i)
+                events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
+                for each in events.values():
+                    each['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each['image'])
+                    brand = Brand.objects.get(id=each['brand_id'])
+                    ev = Event.objects.get(id=each['id'])
+                    event.append(each)
+                    event[-1]['brand_name'] = brand.name
+                    event[-1]['d-day'] = (ev.due - now).days
+                    if len(events) <= size:
+                        event[-1]['next_page'] = -1
+                    else:
+                        event[-1]['next_page'] = int(page) + 1
+            for i in range((int(page) - 1) * slice, size):
+                if len(event) <= i:
+                    return JsonResponse({'event': result}, status=200)
+                result.append(event[i])
+
+        return JsonResponse({'event': result}, status=200)
+
+class PagenationTest2(APIView):
+    # 회원 event
+    def post(self, request):
+        data = JSONParser().parse(request)
+        category_id = data['category_id']
+        brand_name = data['brand_name']
+        user_id = request.user.id
+        subscribes = SubscribeEvent.objects.filter(user=user_id)
+        now = datetime.datetime.now()
+        event = []
+        page = request.GET['page']
+        slice = 2
+        size = int(page) * slice
+        result = []
+        if len(brand_name) == 0:
+            events = Event.objects.filter(category=category_id, due__gt=now).order_by('-id')
+            for each_event in events.values():
+                ev = Event.objects.get(id=each_event['id'])
+                # 이벤트 사진 url
+                each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
+                for each_sub in subscribes:
+                    if each_sub.event.id == each_event['id']:
+                        brand = Brand.objects.get(id=each_event['brand_id'])
+                        event.append(each_event)
+                        event[-1]['brand_name'] = brand.name
+                        event[-1]['subs'] = True
+                        event[-1]['d-day'] = (ev.due - now).days
+                        break
+                else:
+                    brand = Brand.objects.get(id=each_event['brand_id'])
+                    event.append(each_event)
+                    event[-1]['brand_name'] = brand.name
+                    event[-1]['subs'] = False
+                    event[-1]['d-day'] = (ev.due - now).days
+            for i in range((int(page) - 1) * slice, size):
+                if len(event) <= i:
+                    return JsonResponse({'event': result}, status=200)
+                result.append(event[i])
+
+        else:
+            for i in brand_name:
+                try:
+                    br = Brand.objects.get(name=i)
+                    events = Event.objects.filter(brand=br.id, category=category_id, due__gt=now).order_by('-id')
+                    for each_event in events.values():
+                        ev = Event.objects.get(id=each_event['id'])
+                        each_event['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(each_event['image'])
+                        for each_sub in subscribes:
+                            if each_sub.event.id == each_event['id']:
+                                brand = Brand.objects.get(id=each_event['brand_id'])
+                                event.append(each_event)
+                                event[-1]['brand_name'] = brand.name
+                                event[-1]['subs'] = True
+                                event[-1]['d-day'] = (ev.due - now).days
+                                break
+                        else:
+                            brand = Brand.objects.get(id=each_event['brand_id'])
+                            event.append(each_event)
+                            event[-1]['brand_name'] = brand.name
+                            event[-1]['subs'] = False
+                            event[-1]['d-day'] = (ev.due - now).days
+                except Exception as e:
+                    continue
+            for i in range((int(page) - 1) * slice, size):
+                if len(event) <= i:
+                    return JsonResponse({'event': result}, status=200)
+                result.append(event[i])
+
+        return JsonResponse({'event': result}, status=200)
