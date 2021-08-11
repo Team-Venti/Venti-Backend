@@ -147,7 +147,7 @@ class BannerWeekly(APIView):
 
 @permission_classes([AllowAny])
 # guest eventforyou, event
-class PagenationTest1(APIView):
+class PaginationTest1(APIView):
     def post(self, request):
         data = JSONParser().parse(request)
         category_id = data['category_id']
@@ -217,7 +217,7 @@ class PagenationTest1(APIView):
 
         return JsonResponse({'event': result, 'next_page': next_page}, status=200)
 
-class PagenationTest2(APIView):
+class PaginationTest2(APIView):
     # 회원 event
     def post(self, request):
         data = JSONParser().parse(request)

@@ -5,7 +5,7 @@ import json
 # from rest_framework.decorators import api_view, renderer_classes
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
-from .models import Event, SubscribeBrand,SubscribeEvent
+from .models import Event, SubscribeBrand,SubscribeEvent, Brand
 from django.http import JsonResponse, HttpResponse
 from .serializer_subscribeBrand import UseridSerializer
 from rest_framework.parsers import JSONParser
@@ -102,7 +102,7 @@ class EventforyouView(APIView):
 
         subscribebrands = SubscribeBrand.objects.filter(user=user)
         now = datetime.datetime.now()
-
+        room = []
         for i in subscribebrands :
             brandname = i.brand.name
             eventforyou = Event.objects.filter(brand=i.brand,category = category_id, due__gt=now)
@@ -115,5 +115,24 @@ class EventforyouView(APIView):
                 else:
                     j['subs'] = False
                 events.append(j)
+                room.append(j['id'])
+
+        if (len(events) < 10):
+            eventforyou = Event.objects.filter(category=category_id, due__gt=now).order_by("?")
+            index = 10 - len(events)
+            for j in eventforyou.values():
+                brand = Brand.objects.filter(id = j['brand_id'])
+                if j['id'] not in room:
+                    index = index - 1
+                    j['brand_name'] = brand[0].name
+                    j['event_img_url'] = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(j['image'])
+                    j['d-day'] = (j["due"] - now).days
+                    if j['id'] in subevents:
+                        j['subs'] = True
+                    else:
+                        j['subs'] = False
+                    events.append(j)
+                    if(index == 0):
+                        break
 
         return JsonResponse({'event' : events}, status=200)
