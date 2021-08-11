@@ -47,8 +47,8 @@ urlpatterns = [
     path('guest/search/', GuestSearch.as_view()),
     path('search/', Search.as_view()),
     path('weekly/', BannerWeekly.as_view()),
-    path('pagenations1/', PagenationTest1.as_view()),
-    path('pagenations2/', PagenationTest2.as_view()),
+    path('paginations1/', PagenationTest1.as_view()),
+    path('paginations2/', PagenationTest2.as_view()),
     # path('weekly/', Weekly.as_view()), 배너 실시간 일때!
     path('eventforyou/', EventforyouView.as_view(),name = "eventforyou"),
     path('guest/brand_list/', BrandList.as_view()),
