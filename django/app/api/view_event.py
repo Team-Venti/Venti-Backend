@@ -307,7 +307,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 except Exception as e:
                     continue
             # 페이지네이션 next_page 설정
-            if len(event) <= size:
+            if len(event) <= default_slice + size:
                 next_page = -1
             else:
                 next_page = int(page) + 1
