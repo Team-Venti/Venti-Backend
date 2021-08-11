@@ -4,17 +4,13 @@
 
 ## 프로젝트 설명
 
-<img src="/img/project_detail.png"></img>
+<img src="/img/project_detail.png" width="40%" height="50%"></img>
 
 **이벤트 및 할인 정보 모음 플랫폼**
 
 ## 핵심 기능
 
-<img src="/img/func1.png"></img>
-
-<img src="/img/func2.png"></img>
-
-<img src="/img/func3.png"></img>
+<img src="/img/func1.png" width="30%" height="20%"></img> <img src="/img/func2.png" width="30%" height="20%"></img> <img src="/img/func3.png" width="30%" height="20%"></img>
 
 - 필터링
 
