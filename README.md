@@ -1,4 +1,3 @@
-# Backend 정리
 
 # VENTI
 
@@ -93,8 +92,6 @@ django-storages
 
 ## Contact Us
 
-김현진 - ~~개발
+* [김현진](https://github.com/gimkuku) - jwt, eventforyou, 마감알림, 도커, 배포, ~추가~ 
 
-@github.io/gimkuku
-
-[이준기](https://github.com/Jun-k0) - 뭐뭐했다
+* [이준기](https://github.com/Jun-k0) - ERD, MYVENTI, 검색, 등록알림, 배너, 필터링
