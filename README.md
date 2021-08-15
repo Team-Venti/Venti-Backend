@@ -59,7 +59,7 @@
 
     > - AWS EC2
 
-- Frontend(레포 연결)
+[Frontend](https://github.com/Team-Venti/Venti-Frontend).
 
 ## ERD
 
