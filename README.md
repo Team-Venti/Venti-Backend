@@ -59,7 +59,8 @@
 
     > - AWS EC2
 
-[Frontend](https://github.com/Team-Venti/Venti-Frontend).
+- Frontend
+    > [Frontend](https://github.com/Team-Venti/Venti-Frontend)
 
 ## ERD
 
@@ -92,6 +93,6 @@ django-storages
 
 ## Contact Us
 
-* [김현진](https://github.com/gimkuku) - jwt, eventforyou, 마감알림, 도커, CI&CD
+* [김현진](https://github.com/gimkuku) - jwt, eventforyou, 마감알림, 도커, CI&CD, AWS
 
 * [이준기](https://github.com/Jun-k0) - ERD, MYVENTI, 검색, 등록알림, 배너, 필터링
