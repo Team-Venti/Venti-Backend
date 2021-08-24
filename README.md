@@ -40,12 +40,12 @@
 - Database
 
     **배포 전** : 
-    - MySQL
+    > MySQL
 
     **배포 후** :
-    - Amazon RDS
+    > Amazon RDS
       : User 정보, 이벤트, 브랜드 정보 저장
-    - Amazon S3 
+    > Amazon S3 
       : 이미지 저장
 
      
@@ -59,7 +59,8 @@
 
     > - AWS EC2
 
-- Frontend(레포 연결)
+- Frontend
+    > [Frontend](https://github.com/Team-Venti/Venti-Frontend)
 
 ## ERD
 
@@ -92,6 +93,6 @@ django-storages
 
 ## Contact Us
 
-* [김현진](https://github.com/gimkuku) - jwt, eventforyou, 마감알림, 도커, 배포, ~추가~ 
+* [김현진](https://github.com/gimkuku) - jwt, eventforyou, 마감알림, 도커, CI&CD, AWS
 
 * [이준기](https://github.com/Jun-k0) - ERD, MYVENTI, 검색, 등록알림, 배너, 필터링
