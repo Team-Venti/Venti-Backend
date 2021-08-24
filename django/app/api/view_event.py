@@ -170,7 +170,6 @@ class EventViewSet(viewsets.ModelViewSet):
             description="해당 카테고리 + 브랜드 필터링을 거친 모든 이벤트 목록과 좋아요 정보를 제공하는 API",
             examples={
                 "application/json": {
-                     {
                     "event": [
                         {
                             "id": 175,
@@ -238,7 +237,6 @@ class EventViewSet(viewsets.ModelViewSet):
                         }
                     ],
                     "next_page": 3
-                    }
                 }
             }
         )
