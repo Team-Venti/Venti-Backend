@@ -66,7 +66,7 @@ def kakao_ocr(image_path, appkey):
 def main(image_url):
     if len(sys.argv) != 3:
         print("Please run with args: $ python example.py /path/to/image appkey")
-    image_url, appkey = image_url, '068006612c6a9db057e8a90220f2263c'
+    image_url, appkey = image_url, '@여기에 appkey'
 
     # resp = urllib.request.urlopen(image_url)
     # image_path = np.asarray(bytearray(resp.read()), dtype="uint8")
