@@ -21,10 +21,7 @@ services:
     expose:
       - "3306"
     environment:
-      MYSQL_DATABASE: venti1
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 111111
-      MYSQL_ROOT_PASSWORD: 111111
+      - ./mysql/env.dev
     volumes:
       - ../db/data:/var/lib/mysql
       - ../db/data/conf.d:/etc/mysql/conf.d

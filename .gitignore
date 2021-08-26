@@ -75,3 +75,8 @@ mysql/db
 .classpath
 .project
 .settings
+
+# environment files
+.env.dev
+.env.statging
+.env.product
