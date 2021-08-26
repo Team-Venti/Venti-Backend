@@ -16,3 +16,5 @@ sqlparse
 drf_yasg
 django-cors-headers
 django-background-tasks
+opencv-python-headless
+requests

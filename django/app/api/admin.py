@@ -3,7 +3,8 @@ from django.contrib import admin
 from background_task import background
 from .models import *
 from datetime import datetime, timedelta
-
+from .ocr_api import main
+import urllib
 # Register your models here.
 from .models import User, Brand, Event, Category, SubscribeBrand, SubscribeEvent, Notification
 
@@ -40,17 +41,32 @@ class BrandAdmin(admin.ModelAdmin):
 class EventAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'category', 'brand', 'due', 'view']
     list_display_links = ['id', 'name']
-    actions = ['make_notification']
+    actions = ['make_notification','ocr']
 
     def make_notification(self, request, queryset):
+        # 알람 전송
         for i in queryset:
             subscribe = SubscribeBrand.objects.filter(brand=i.brand.id)
             for j in subscribe:
                 user = User.objects.filter(id=j.user.id)
                 user.update(noti_state=True)
                 Notification.objects.create(user=User.objects.get(id=j.user.id), brand=i.brand, event=Event.objects.get(id=i.id), notice_type="new")
+        # ocr_test
+            image_url = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i.image)
+            main(image_url)
+
+    def ocr(self, request, queryset):
+        # 알람 전송
+        for i in queryset:
+        # ocr_test
+            image = urllib.parse.quote(str(i.image))
+            image_url = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + image
+            ocr_text = main(image_url)
+            i.ocr_text = ocr_text
+            i.save()
 
     make_notification.short_description = '지정 이벤트의 알림 전송'
+    ocr.short_description = '이미지에서 글자 추출'
 
 
 @admin.register(Category)

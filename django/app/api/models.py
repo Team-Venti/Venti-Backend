@@ -45,6 +45,7 @@ class Event(DateInfo):
     due = models.DateTimeField(null=True)
     view = models.IntegerField(null=True, default=0)
     url = models.URLField(null=True)
+    ocr_text = models.TextField(null=True)
 
     def __str__(self):
         return self.name

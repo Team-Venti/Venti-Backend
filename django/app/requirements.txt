@@ -40,3 +40,5 @@ uritemplate==3.0.1
 urllib3==1.26.6
 boto3
 django-storages
+opencv-python-headless
+requests
