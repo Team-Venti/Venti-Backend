@@ -162,7 +162,7 @@ class Search(APIView):
         name = request.GET['search']
         user_id = request.user.id
         now = datetime.datetime.now()
-        event = Event.objects.filter(name__contains=name, due__gt=now)
+        event = Event.objects.filter(name__contains=name, due__gt=now) | Event.objects.filter(ocr_text__contains=name, due__gt=now)
         brand = Brand.objects.filter(name__contains=name)
         subscribe = SubscribeEvent.objects.filter(user=user_id)
         events = []
