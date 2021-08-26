@@ -1,5 +1,5 @@
 /django/app/venti/secrets.json
-
+/django/app/api/ocr_api.py
 # Folder view configuration files
 .DS_Store
 Desktop.ini
