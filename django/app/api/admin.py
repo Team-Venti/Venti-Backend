@@ -51,9 +51,6 @@ class EventAdmin(admin.ModelAdmin):
                 user = User.objects.filter(id=j.user.id)
                 user.update(noti_state=True)
                 Notification.objects.create(user=User.objects.get(id=j.user.id), brand=i.brand, event=Event.objects.get(id=i.id), notice_type="new")
-        # ocr_test
-            image_url = 'https://venti-s3.s3.ap-northeast-2.amazonaws.com/media/' + str(i.image)
-            main(image_url)
 
     def ocr(self, request, queryset):
         # 알람 전송
